@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter — A Terra Liberty</title>
+  <meta name="description" content="Subscribe to Letters from Portugal — journal posts, health notes, and real life updates from Elena in Central Portugal. No sponsors. No noise.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ======= HEADER ======= -->
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header__top" style="position:relative;">
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="index.html" class="site-header__brand">A Terra Liberty</a>
+        <p class="site-header__tagline">Slow Living in a Fast World</p>
+      </div>
+      <nav class="site-nav" id="siteNav">
+        <ul class="site-nav__list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="journal.html">Journal &amp; Videos</a></li>
+          <li><a href="healthnotes.html">Health Notes</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="newsletter.html" class="active">Newsletter</a></li>
+          <li><a href="newsletter.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ======= NEWSLETTER HERO ======= -->
+  <div class="newsletter-page-hero">
+    <div class="container">
+      <h1>Letters from Portugal</h1>
+      <p class="lead">Real dispatches from a slow life in Central Portugal. New journal posts, health research notes, life updates, and occasional finds — written personally and sent without noise.</p>
+      <span class="newsletter-trust">No sponsors. No affiliate links. Just real letters from Portugal.</span>
+    </div>
+  </div>
+
+  <!-- ======= WHAT YOU GET ======= -->
+  <section class="section" style="padding-bottom: 0;">
+    <div class="container">
+
+      <p class="section-label">What Subscribers Receive</p>
+
+      <div class="newsletter-perks">
+        <div class="newsletter-perk">
+          <h4>Journal Posts</h4>
+          <p>New written essays and reflections from life in Central Portugal — the beautiful days and the honest ones. First in your inbox before anywhere else.</p>
+        </div>
+        <div class="newsletter-perk">
+          <h4>Health Notes</h4>
+          <p>My ongoing research into longevity, gut health, and what the science actually says — cross-referenced with what I observe in daily village life here.</p>
+        </div>
+        <div class="newsletter-perk">
+          <h4>Portugal Life Updates</h4>
+          <p>The real story of building a life in a new country — the seasons, the market, the language, the neighbours. Unfiltered and personal.</p>
+        </div>
+        <div class="newsletter-perk">
+          <h4>Shop &amp; YouTube Updates</h4>
+          <p>When new videos go live, when the shop updates, and when something worth sharing lands in our world. You'll always hear it here first.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======= SIGNUP FORM ======= -->
+  <section class="section">
+    <div class="container">
+
+      <div class="newsletter-signup-box">
+        <h2>Subscribe to Letters from Portugal</h2>
+        <p style="color:var(--text-muted); font-size:0.94rem; line-height:1.75;">Tell me what you're most interested in and I'll make sure the letters feel relevant to you. Unsubscribe any time — no questions, no guilt.</p>
+
+        <div class="interests-group">
+          <span class="interests-group__label">I'm most interested in (select all that apply):</span>
+          <div class="interests-grid">
+            <label class="interest-item">
+              <input type="checkbox" name="interests" value="journal" checked>
+              <span>Journal Posts</span>
+            </label>
+            <label class="interest-item">
+              <input type="checkbox" name="interests" value="health" checked>
+              <span>Health Notes</span>
+            </label>
+            <label class="interest-item">
+              <input type="checkbox" name="interests" value="portugal">
+              <span>Portugal Life</span>
+            </label>
+            <label class="interest-item">
+              <input type="checkbox" name="interests" value="shop">
+              <span>Shop Updates</span>
+            </label>
+          </div>
+        </div>
+
+        <form class="newsletter-full-form" id="newsletterForm" onsubmit="handleNewsletterSubmit(event)">
+          <input type="text" name="name" placeholder="Your first name" required>
+          <input type="email" name="email" placeholder="Your email address" required>
+          <button type="submit">Subscribe to Letters from Portugal</button>
+          <p style="font-size:0.75rem; color:var(--text-light); text-align:center; margin-top:0.25rem;">No sponsors. No affiliate links. Just real letters from Portugal. Unsubscribe anytime.</p>
+        </form>
+
+        <div id="newsletter-success" style="display:none; text-align:center; padding:2.5rem 0;">
+          <p style="font-family:var(--font-serif); font-size:1.5rem; color:var(--brown-dark); font-style:italic; margin-bottom:0.5rem;">Thank you.</p>
+          <p style="font-size:0.9rem; color:var(--text-muted);">You're subscribed. The next letter from Portugal is on its way.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======= CONTACT SECTION ======= -->
+  <section class="section" style="background:var(--cream-dark); border-top:1px solid var(--border);" id="contact">
+    <div class="container">
+      <p class="section-label">Get in Touch</p>
+      <div class="contact-layout">
+
+        <!-- Left: Info -->
+        <div class="contact-info">
+          <h2>I would love to hear from you</h2>
+          <p>
+            Whether you are curious about life in Portugal, want to collaborate on something aligned with slow living and intentional health, or just want to say hello — my inbox is open. I read every message personally and reply when I can.
+          </p>
+          <p style="font-style:italic; color:var(--brown-mid);">
+            Please allow a few days. I do not live in a hurry.
+          </p>
+
+          <div style="margin: 2.5rem 0;">
+
+            <div class="contact-detail">
+              <div class="contact-detail__icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <div class="contact-detail__label">Email</div>
+                <div class="contact-detail__value">Use the form — I read everything personally.</div>
+              </div>
+            </div>
+
+            <div class="contact-detail">
+              <div class="contact-detail__icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" stroke="none" fill="currentColor"/></svg>
+              </div>
+              <div>
+                <div class="contact-detail__label">YouTube</div>
+                <div class="contact-detail__value">
+                  <a href="https://www.youtube.com/@aterraliberty" target="_blank" rel="noopener" style="color: var(--terracotta);">@aterraliberty</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="contact-detail">
+              <div class="contact-detail__icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <div class="contact-detail__label">Location</div>
+                <div class="contact-detail__value">Central Portugal</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="background: var(--white); border: 1px solid var(--border); padding: 1.75rem 2rem;">
+            <h4 style="font-family: var(--font-serif); font-size: 1.05rem; margin-bottom: 0.6rem; color: var(--brown-dark);">A note on collaborations</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.75; margin:0;">
+              I only work with brands and products I genuinely use and believe in. If you have something that aligns with slow living, real food, integrative health, or life in Portugal — I'm interested in the conversation. If it doesn't fit this world, it's not the right match. I do not run paid placements or undisclosed advertising.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div>
+          <div class="contact-form">
+            <p class="section-label" style="margin-bottom: 1.75rem;">Send a Message</p>
+
+            <form onsubmit="handleContactSubmit(event)">
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:0;">
+                <div class="form-group">
+                  <label for="first-name">First Name</label>
+                  <input type="text" id="first-name" name="first_name" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                  <label for="last-name">Last Name</label>
+                  <input type="text" id="last-name" name="last_name" placeholder="Your surname">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="your@email.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <select id="subject" name="subject">
+                  <option value="" disabled selected>Select a topic</option>
+                  <option value="hello">Just saying hello</option>
+                  <option value="collaboration">Brand collaboration</option>
+                  <option value="portugal">Questions about Portugal</option>
+                  <option value="health">Health &amp; longevity</option>
+                  <option value="press">Press &amp; media</option>
+                  <option value="other">Something else</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Write your message here..." required></textarea>
+              </div>
+
+              <button type="submit" class="form-submit">Send Message</button>
+
+            </form>
+
+            <div id="contact-success" style="display:none; text-align:center; padding: 2rem 0;">
+              <div style="font-family: var(--font-serif); font-size: 1.3rem; color: var(--brown-dark); margin-bottom: 0.5rem; font-style:italic;">Thank you.</div>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">Your message has been received. I will be in touch when I can — I do not live in a hurry.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= FOOTER ======= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div class="footer-brand">
+          <h3>A Terra Liberty</h3>
+          <p>Slow living in Central Portugal. Documenting food, health, and the intentional life we are building — one quiet morning at a time.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="journal.html">Journal &amp; Videos</a></li>
+            <li><a href="healthnotes.html">Health Notes</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="newsletter.html">Newsletter</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="https://www.youtube.com/@aterraliberty" target="_blank" rel="noopener">YouTube</a></li>
+            <li><a href="https://www.instagram.com/aterraliberty" target="_blank" rel="noopener">Instagram</a></li>
+            <li><a href="newsletter.html#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-newsletter">
+        <p>Letters from Portugal — no sponsors, no noise.</p>
+        <form class="newsletter-form footer-newsletter-form" onsubmit="return false;">
+          <input type="email" placeholder="Your email address">
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+      <div class="site-footer__bottom">
+        <span>&copy; 2025 A Terra Liberty. All rights reserved.</span>
+        <span>Elena &mdash; Central Portugal</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const nav = document.getElementById('siteNav');
+    toggle.addEventListener('click', () => nav.classList.toggle('open'));
+
+    function handleNewsletterSubmit(e) {
+      e.preventDefault();
+      document.getElementById('newsletterForm').style.display = 'none';
+      document.getElementById('newsletter-success').style.display = 'block';
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      form.style.display = 'none';
+      document.getElementById('contact-success').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>

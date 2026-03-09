@@ -1,0 +1,6 @@
+*.py
+activity_log.txt
+pending_task.txt
+__pycache__/
+*.pyc
+.claude/
