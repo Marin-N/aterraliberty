@@ -68,7 +68,7 @@
       </div>
       <form class="newsletter-hero__form" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
         <input type="email" name="email" placeholder="Your email address" required>
-        <input type="hidden" name="_subject" value="New subscriber — A Terra Liberty">
+        <input type="hidden" name="source" value="homepage">
         <button type="submit">Subscribe Free</button>
       </form>
     </div>
@@ -371,7 +371,7 @@
         <p>Letters from Portugal — no sponsors, no noise.</p>
         <form class="newsletter-form footer-newsletter-form" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
           <input type="email" name="email" placeholder="Your email address" required>
-          <input type="hidden" name="_subject" value="New subscriber — A Terra Liberty">
+          <input type="hidden" name="source" value="homepage">
           <button type="submit">Subscribe</button>
         </form>
       </div>
@@ -442,6 +442,8 @@
         e.preventDefault();
         var data = {};
         [].forEach.call(new FormData(form), function(v, k) { data[k] = v; });
+        data.referrer = document.referrer;
+        if (!data.source) data.source = 'homepage';
         var isContact = !!data.message;
         var url = isContact ? FORM_API + '/contact' : FORM_API + '/subscribe';
         var btn = form.querySelector('button[type="submit"]');

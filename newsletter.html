@@ -103,7 +103,7 @@
         <form class="newsletter-full-form" id="newsletterForm" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
           <input type="text" name="name" placeholder="Your first name" required>
           <input type="email" name="email" placeholder="Your email address" required>
-          <input type="hidden" name="_subject" value="New subscriber — Letters from Portugal">
+          <input type="hidden" name="source" value="newsletter">
           <button type="submit">Subscribe to Letters from Portugal</button>
           <p style="font-size:0.75rem; color:var(--text-light); text-align:center; margin-top:0.25rem;">No sponsors. No affiliate links. Just real letters from Portugal. Unsubscribe anytime.</p>
         </form>
@@ -265,7 +265,7 @@
         <p>Letters from Portugal — no sponsors, no noise.</p>
         <form class="newsletter-form footer-newsletter-form" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
           <input type="email" name="email" placeholder="Your email address" required>
-          <input type="hidden" name="_subject" value="New subscriber — A Terra Liberty">
+          <input type="hidden" name="source" value="newsletter">
           <button type="submit">Subscribe</button>
         </form>
       </div>
@@ -302,6 +302,8 @@
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         var data = {}; [].forEach.call(new FormData(form), function(v, k) { data[k] = v; });
+        data.referrer = document.referrer;
+        if (!data.source) data.source = 'newsletter';
         var isContact = !!data.message;
         var url = isContact ? FORM_API + '/contact' : FORM_API + '/subscribe';
         var btn = form.querySelector('button[type="submit"]'); var orig = btn ? btn.textContent : '';

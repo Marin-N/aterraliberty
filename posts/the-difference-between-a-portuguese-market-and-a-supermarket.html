@@ -132,7 +132,7 @@
       <p>New posts, quiet reflections, and slow-living notes — straight to your inbox. No noise.</p>
       <form class="newsletter-form" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
         <input type="email" name="email" placeholder="Your email address" required>
-        <input type="hidden" name="_subject" value="New subscriber — A Terra Liberty">
+        <input type="hidden" name="source" value="post">
         <button type="submit">Subscribe</button>
       </form>
     </div>
@@ -164,6 +164,24 @@
     const toggle = document.getElementById('navToggle');
     const nav = document.getElementById('siteNav');
     toggle.addEventListener('click', () => nav.classList.toggle('open'));
+
+    [].forEach.call(document.querySelectorAll('form[action*="atl-form-handler"]'), function(form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var data = {};
+        [].forEach.call(new FormData(form), function(v, k) { data[k] = v; });
+        data.referrer = document.referrer;
+        if (!data.source) data.source = window.location.pathname.replace(/.*\//, '').replace('.html', '') || 'post';
+        var btn = form.querySelector('button[type="submit"]');
+        var orig = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending\u2026'; }
+        fetch('https://atl-form-handler.coddinging.workers.dev/subscribe', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+        }).then(function() {
+          if (btn) { btn.textContent = '\u2713 Done!'; }
+        }).catch(function() { if (btn) { btn.disabled = false; btn.textContent = orig; } });
+      });
+    });
   </script>
 </body>
 </html>
