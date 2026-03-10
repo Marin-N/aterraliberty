@@ -100,9 +100,10 @@
           </div>
         </div>
 
-        <form class="newsletter-full-form" id="newsletterForm" onsubmit="handleNewsletterSubmit(event)">
+        <form class="newsletter-full-form" id="newsletterForm" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
           <input type="text" name="name" placeholder="Your first name" required>
           <input type="email" name="email" placeholder="Your email address" required>
+          <input type="hidden" name="_subject" value="New subscriber — Letters from Portugal">
           <button type="submit">Subscribe to Letters from Portugal</button>
           <p style="font-size:0.75rem; color:var(--text-light); text-align:center; margin-top:0.25rem;">No sponsors. No affiliate links. Just real letters from Portugal. Unsubscribe anytime.</p>
         </form>
@@ -181,7 +182,7 @@
           <div class="contact-form">
             <p class="section-label" style="margin-bottom: 1.75rem;">Send a Message</p>
 
-            <form onsubmit="handleContactSubmit(event)">
+            <form action="https://atl-form-handler.coddinging.workers.dev/contact" method="POST">
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:0;">
                 <div class="form-group">
@@ -262,8 +263,9 @@
       </div>
       <div class="footer-newsletter">
         <p>Letters from Portugal — no sponsors, no noise.</p>
-        <form class="newsletter-form footer-newsletter-form" onsubmit="return false;">
-          <input type="email" placeholder="Your email address">
+        <form class="newsletter-form footer-newsletter-form" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
+          <input type="email" name="email" placeholder="Your email address" required>
+          <input type="hidden" name="_subject" value="New subscriber — A Terra Liberty">
           <button type="submit">Subscribe</button>
         </form>
       </div>
@@ -278,19 +280,44 @@
     const toggle = document.getElementById('navToggle');
     const nav = document.getElementById('siteNav');
     toggle.addEventListener('click', () => nav.classList.toggle('open'));
+  </script>
 
-    function handleNewsletterSubmit(e) {
-      e.preventDefault();
-      document.getElementById('newsletterForm').style.display = 'none';
-      document.getElementById('newsletter-success').style.display = 'block';
+  <!-- ATL Analytics & Form Handler — async, non-blocking, no UI changes -->
+  <script>
+  !function(){
+    var ANALYTICS = 'https://atl-analytics.coddinging.workers.dev/track';
+    var FORM_API  = 'https://atl-form-handler.coddinging.workers.dev';
+    var PAGE      = 'newsletter';
+    var ref = document.referrer;
+    var source = ref.indexOf('google') > -1 ? 'google' : ref.indexOf('youtube') > -1 ? 'youtube' : ref.indexOf('instagram') > -1 || ref.indexOf('facebook') > -1 ? 'social' : ref ? 'referral' : 'direct';
+    var device = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+    function track(event, extra) {
+      try { var p = JSON.stringify(Object.assign({ event: event, page: PAGE, source: source, device: device }, extra || {})); if (navigator.sendBeacon) { navigator.sendBeacon(ANALYTICS, p); } else { fetch(ANALYTICS, { method: 'POST', body: p, keepalive: true }).catch(function(){}); } } catch(e) {}
     }
-
-    function handleContactSubmit(e) {
-      e.preventDefault();
-      const form = e.target;
-      form.style.display = 'none';
-      document.getElementById('contact-success').style.display = 'block';
-    }
+    track('pageview');
+    [].forEach.call(document.querySelectorAll('a[href*="youtube.com"]'), function(el) { el.addEventListener('click', function() { track('click', { type: 'youtube' }); }); });
+    var t0 = Date.now(); window.addEventListener('pagehide', function() { track('time', { seconds: Math.round((Date.now() - t0) / 1000) }); });
+    // Intercept both forms and POST JSON to Worker
+    [].forEach.call(document.querySelectorAll('form[action*="atl-form-handler"]'), function(form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var data = {}; [].forEach.call(new FormData(form), function(v, k) { data[k] = v; });
+        var isContact = !!data.message;
+        var url = isContact ? FORM_API + '/contact' : FORM_API + '/subscribe';
+        var btn = form.querySelector('button[type="submit"]'); var orig = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending\u2026'; }
+        fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+          .then(function(r) { return r.json(); })
+          .then(function() {
+            track('click', { type: isContact ? 'contact_sent' : 'subscribe_success' });
+            form.style.display = 'none';
+            var successId = isContact ? 'contact-success' : 'newsletter-success';
+            var s = document.getElementById(successId); if (s) s.style.display = 'block';
+          })
+          .catch(function() { if (btn) { btn.disabled = false; btn.textContent = orig; } });
+      });
+    });
+  }();
   </script>
 
 </body>

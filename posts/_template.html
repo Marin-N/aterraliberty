@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  A TERRA LIBERTY — BLOG POST TEMPLATE
+  ============================================================
+  HOW TO CREATE A NEW POST:
+  1. Copy this file and rename it using lowercase-with-hyphens.html
+     e.g. posts/my-new-post-title.html
+  2. Fill in every section marked with [BRACKETS]
+  3. Add the post to journal.html (copy an existing post-card article)
+  4. Optionally link it from index.html featured/recent posts
+  ============================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[POST TITLE] — A Terra Liberty</title>
+  <meta name="description" content="[META DESCRIPTION — 1–2 sentences, max 160 characters]">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <!-- ======= HEADER (unchanged — copy as-is) ======= -->
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header__top" style="position:relative;">
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="../index.html" class="site-header__brand">A Terra Liberty</a>
+        <p class="site-header__tagline">Slow Living in a Fast World</p>
+      </div>
+      <nav class="site-nav" id="siteNav">
+        <ul class="site-nav__list">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../journal.html" class="active">Journal &amp; Videos</a></li>
+          <li><a href="../healthnotes.html">Health Notes</a></li>
+          <li><a href="../shop.html">Shop</a></li>
+          <li><a href="../about.html">About</a></li>
+          <li><a href="../newsletter.html">Newsletter</a></li>
+          <li><a href="../newsletter.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ======= POST HEADER ======= -->
+  <!--
+    CATEGORY OPTIONS (must match journal.html filter data-category values):
+      Slow Living      → data-category="slow-living"
+      Portugal Life    → data-category="portugal-life"
+      Food & Health    → data-category="food-health"
+      Longevity        → data-category="longevity"
+
+    Use the display name in post-header__category and the slug in journal.html
+  -->
+  <div class="post-header">
+    <div class="container">
+      <p class="post-header__breadcrumb"><a href="../journal.html">Journal</a> &nbsp;/&nbsp; [CATEGORY DISPLAY NAME]</p>
+      <span class="post-header__category">[CATEGORY DISPLAY NAME]</span>
+      <h1 class="post-header__title">[POST TITLE]</h1>
+      <div class="post-header__meta">
+        <span>[Month Year]</span>       <!-- e.g. April 2025 -->
+        <span>[X min read]</span>       <!-- e.g. 5 min read -->
+        <span>By Elena</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="container">
+      <div class="post-layout">
+
+        <!-- ======= MAIN POST BODY ======= -->
+        <article class="post-body">
+
+          <!-- HERO IMAGE: use ../content/images/FILENAME.jpeg -->
+          <div class="post-body__image">
+            <img src="../content/images/[IMAGE-FILENAME].jpeg" alt="[IMAGE ALT TEXT]">
+          </div>
+
+          <!-- POST CONTENT -->
+          <div class="post-body__content">
+
+            <!-- Opening paragraph — no heading, sets the scene -->
+            <p>[Opening paragraph. Hook the reader. Personal, specific, present tense where possible.]</p>
+
+            <!-- Section 1 -->
+            <h2>[Section Heading]</h2>
+            <p>[Body text. Write in Elena's voice: honest, reflective, not performative. First person. Real observations.]</p>
+            <p>[Continue section...]</p>
+
+            <!-- Pull quote — use sparingly, one per post -->
+            <blockquote>
+              <p>[A single strong sentence pulled from the post — the most resonant line.]</p>
+            </blockquote>
+
+            <!-- Section 2 -->
+            <h2>[Section Heading]</h2>
+            <p>[Body text...]</p>
+
+            <!-- Section 3 (add more sections as needed) -->
+            <h2>[Section Heading]</h2>
+            <p>[Body text...]</p>
+
+            <!-- Closing section -->
+            <h2>[Closing Heading]</h2>
+            <p>[Closing thoughts. Land on something true and specific. No grand proclamations.]</p>
+
+            <!-- Navigation: previous/next post links -->
+            <div class="post-body__back">
+              <div class="post-nav">
+                <a href="[previous-post-filename].html">&larr; Previous Post</a>
+                <a href="[next-post-filename].html">Next Post &rarr;</a>
+                <!-- Or link back to journal if no next/previous: -->
+                <!-- <a href="../journal.html">&larr; Back to Journal</a> -->
+              </div>
+            </div>
+
+          </div>
+        </article>
+
+        <!-- ======= SIDEBAR ======= -->
+        <aside class="sidebar">
+
+          <div class="sidebar-widget">
+            <h3 class="sidebar-widget__title">Related Posts</h3>
+            <!-- Add 2–3 related posts here -->
+            <div class="sidebar-post">
+              <div class="sidebar-post__image"><img src="../content/images/[IMAGE].jpeg" alt=""></div>
+              <div>
+                <a href="[post-filename].html"><p class="sidebar-post__title">[Post Title]</p></a>
+                <span class="sidebar-post__date">[Month Year]</span>
+              </div>
+            </div>
+            <!-- Repeat sidebar-post block for each related post -->
+          </div>
+
+          <div class="sidebar-widget">
+            <h3 class="sidebar-widget__title">Newsletter</h3>
+            <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:1rem;">Letters from Portugal — no sponsors, no noise.</p>
+            <a href="../newsletter.html" class="btn-outline" style="display:block; text-align:center;">Subscribe Free</a>
+          </div>
+
+          <div class="sidebar-widget">
+            <h3 class="sidebar-widget__title">On YouTube</h3>
+            <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:1rem;">The visual side of slow living in Central Portugal.</p>
+            <a href="https://www.youtube.com/@aterraliberty" target="_blank" rel="noopener" class="btn-youtube" style="font-size:0.72rem; padding:0.6rem 1.1rem; width:100%; justify-content:center;">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+              Watch on YouTube
+            </a>
+          </div>
+
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ======= NEWSLETTER CTA (unchanged — copy as-is) ======= -->
+  <section class="newsletter-section">
+    <div class="container">
+      <h2>Letters from Portugal</h2>
+      <p>New posts, quiet reflections, and slow-living notes — straight to your inbox. No noise.</p>
+      <form class="newsletter-form" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
+        <input type="email" name="email" placeholder="Your email address" required>
+        <input type="hidden" name="_subject" value="New subscriber — A Terra Liberty">
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ======= FOOTER (unchanged — copy as-is) ======= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div class="footer-brand">
+          <h3>A Terra Liberty</h3>
+          <p>Slow living in Central Portugal. Documenting food, health, and the intentional life we are building — one quiet morning at a time.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../journal.html">Journal &amp; Videos</a></li>
+            <li><a href="../healthnotes.html">Health Notes</a></li>
+            <li><a href="../shop.html">Shop</a></li>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="../newsletter.html">Newsletter</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="https://www.youtube.com/@aterraliberty" target="_blank" rel="noopener">YouTube</a></li>
+            <li><a href="https://www.instagram.com/aterraliberty" target="_blank" rel="noopener">Instagram</a></li>
+            <li><a href="../newsletter.html#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="site-footer__bottom">
+        <span>&copy; 2025 A Terra Liberty. All rights reserved.</span>
+        <span>Elena &mdash; Central Portugal</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======= SCRIPTS (unchanged — copy as-is) ======= -->
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const nav = document.getElementById('siteNav');
+    toggle.addEventListener('click', () => nav.classList.toggle('open'));
+  </script>
+
+</body>
+</html>

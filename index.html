@@ -66,8 +66,9 @@
         <h3>Letters from Portugal</h3>
         <p>New journal posts, health notes, and life updates — no sponsors, no noise.</p>
       </div>
-      <form class="newsletter-hero__form" onsubmit="return false;">
-        <input type="email" placeholder="Your email address">
+      <form class="newsletter-hero__form" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
+        <input type="email" name="email" placeholder="Your email address" required>
+        <input type="hidden" name="_subject" value="New subscriber — A Terra Liberty">
         <button type="submit">Subscribe Free</button>
       </form>
     </div>
@@ -84,7 +85,7 @@
         <div class="featured-grid">
 
           <article class="post-card">
-            <a href="journal.html">
+            <a href="posts/why-we-left-everything-and-moved-to-portugal.html">
               <div class="post-card__image"><img src="content/images/portugal-street.jpeg" alt="Portugal Life"></div>
               <div class="post-card__body">
                 <span class="post-card__category">Slow Living</span>
@@ -99,7 +100,7 @@
           </article>
 
           <article class="post-card">
-            <a href="journal.html">
+            <a href="posts/a-slow-morning-in-central-portugal.html">
               <div class="post-card__image"><img src="content/images/elena-cliffs.jpeg" alt="Morning in Portugal"></div>
               <div class="post-card__body">
                 <span class="post-card__category">Portugal Life</span>
@@ -114,7 +115,7 @@
           </article>
 
           <article class="post-card">
-            <a href="journal.html">
+            <a href="posts/how-shopping-local-changed-the-way-i-eat.html">
               <div class="post-card__image"><img src="content/images/motorhome.jpeg" alt="Life in Portugal"></div>
               <div class="post-card__body">
                 <span class="post-card__category">Food &amp; Health</span>
@@ -144,10 +145,10 @@
             <div class="posts-list">
 
               <article class="post-list-item">
-                <a href="journal.html" class="post-list-item__image"><img src="content/images/elena-cliffs.jpeg" alt="Post"></a>
+                <a href="posts/what-i-have-learned-about-food-and-long-life.html" class="post-list-item__image"><img src="content/images/elena-cliffs.jpeg" alt="Post"></a>
                 <div class="post-list-item__body">
-                  <span class="post-card__category">Health &amp; Longevity</span>
-                  <h3 class="post-card__title"><a href="journal.html">What I Have Learned About Food and Long Life</a></h3>
+                  <span class="post-card__category">Longevity</span>
+                  <h3 class="post-card__title"><a href="posts/what-i-have-learned-about-food-and-long-life.html">What I Have Learned About Food and Long Life</a></h3>
                   <p class="post-card__excerpt">Integrative health is not a trend here — it is just how people live. Notes from my ongoing research into the Portuguese relationship with food and aging.</p>
                   <div class="post-card__meta">
                     <span>February 2025</span>
@@ -157,10 +158,10 @@
               </article>
 
               <article class="post-list-item">
-                <a href="journal.html" class="post-list-item__image"><img src="content/images/motorhome.jpeg" alt="Post"></a>
+                <a href="posts/two-years-in-a-motorhome-across-europe.html" class="post-list-item__image"><img src="content/images/motorhome.jpeg" alt="Post"></a>
                 <div class="post-list-item__body">
-                  <span class="post-card__category">Motorhome Life</span>
-                  <h3 class="post-card__title"><a href="journal.html">Two Years in a Motorhome Across Europe: What It Taught Us</a></h3>
+                  <span class="post-card__category">Slow Living</span>
+                  <h3 class="post-card__title"><a href="posts/two-years-in-a-motorhome-across-europe.html">Two Years in a Motorhome Across Europe: What It Taught Us</a></h3>
                   <p class="post-card__excerpt">Before Portugal became permanent, it was a stop on a long road. Here is what years of nomadic living distilled down to one clear truth.</p>
                   <div class="post-card__meta">
                     <span>January 2025</span>
@@ -170,10 +171,10 @@
               </article>
 
               <article class="post-list-item">
-                <a href="journal.html" class="post-list-item__image"><img src="content/images/portugal-street.jpeg" alt="Post"></a>
+                <a href="posts/building-a-different-relationship-with-time.html" class="post-list-item__image"><img src="content/images/portugal-street.jpeg" alt="Post"></a>
                 <div class="post-list-item__body">
-                  <span class="post-card__category">Intentional Living</span>
-                  <h3 class="post-card__title"><a href="journal.html">Building a Different Relationship with Time</a></h3>
+                  <span class="post-card__category">Slow Living</span>
+                  <h3 class="post-card__title"><a href="posts/building-a-different-relationship-with-time.html">Building a Different Relationship with Time</a></h3>
                   <p class="post-card__excerpt">When urgency stops being the default, something unexpected happens. You start to actually taste things. You start to actually see things.</p>
                   <div class="post-card__meta">
                     <span>December 2024</span>
@@ -183,10 +184,10 @@
               </article>
 
               <article class="post-list-item">
-                <a href="journal.html" class="post-list-item__image"><img src="content/images/elena-cliffs.jpeg" alt="Post"></a>
+                <a href="posts/the-difference-between-a-portuguese-market-and-a-supermarket.html" class="post-list-item__image"><img src="content/images/elena-cliffs.jpeg" alt="Post"></a>
                 <div class="post-list-item__body">
                   <span class="post-card__category">Food &amp; Health</span>
-                  <h3 class="post-card__title"><a href="journal.html">The Difference Between a Portuguese Market and a Supermarket</a></h3>
+                  <h3 class="post-card__title"><a href="posts/the-difference-between-a-portuguese-market-and-a-supermarket.html">The Difference Between a Portuguese Market and a Supermarket</a></h3>
                   <p class="post-card__excerpt">It is not just about price or freshness. It is a completely different transaction — and it changes what you bring home and how you cook it.</p>
                   <div class="post-card__meta">
                     <span>November 2024</span>
@@ -211,7 +212,7 @@
               <div class="sidebar-post">
                 <div class="sidebar-post__image"><img src="content/images/portugal-street.jpeg" alt="Post"></div>
                 <div>
-                  <a href="journal.html"><p class="sidebar-post__title">Why We Left Everything and Moved to Portugal</p></a>
+                  <a href="posts/why-we-left-everything-and-moved-to-portugal.html"><p class="sidebar-post__title">Why We Left Everything and Moved to Portugal</p></a>
                   <span class="sidebar-post__date">March 2025</span>
                 </div>
               </div>
@@ -219,7 +220,7 @@
               <div class="sidebar-post">
                 <div class="sidebar-post__image"><img src="content/images/elena-cliffs.jpeg" alt="Post"></div>
                 <div>
-                  <a href="journal.html"><p class="sidebar-post__title">A Slow Morning in Central Portugal</p></a>
+                  <a href="posts/a-slow-morning-in-central-portugal.html"><p class="sidebar-post__title">A Slow Morning in Central Portugal</p></a>
                   <span class="sidebar-post__date">February 2025</span>
                 </div>
               </div>
@@ -227,7 +228,7 @@
               <div class="sidebar-post">
                 <div class="sidebar-post__image"><img src="content/images/motorhome.jpeg" alt="Post"></div>
                 <div>
-                  <a href="journal.html"><p class="sidebar-post__title">How Shopping Local Changed the Way I Eat</p></a>
+                  <a href="posts/how-shopping-local-changed-the-way-i-eat.html"><p class="sidebar-post__title">How Shopping Local Changed the Way I Eat</p></a>
                   <span class="sidebar-post__date">January 2025</span>
                 </div>
               </div>
@@ -289,10 +290,26 @@
             Subscribe on YouTube
           </a>
         </div>
+        <!--
+          TO ADD REAL VIDEOS: Replace each .video-channel-link block with:
+          <iframe src="https://www.youtube.com/embed/VIDEO_ID"
+            title="Your video title"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
+          Get VIDEO_ID from the YouTube URL: youtube.com/watch?v=VIDEO_ID
+        -->
         <div class="video-grid">
           <div class="video-card">
             <div class="video-card__embed">
-              <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=aterraliberty&index=0" title="A Terra Liberty — Latest Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+              <a href="https://www.youtube.com/@aterraliberty" target="_blank" rel="noopener" class="video-channel-link">
+                <div class="video-channel-link__inner">
+                  <div class="video-channel-link__icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+                  </div>
+                  <span class="video-channel-link__text">Watch on YouTube</span>
+                  <span class="video-channel-link__handle">@aterraliberty</span>
+                </div>
+              </a>
             </div>
             <div class="video-card__body">
               <h3 class="video-card__title">Watch the Latest from A Terra Liberty</h3>
@@ -301,7 +318,15 @@
           </div>
           <div class="video-card">
             <div class="video-card__embed">
-              <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=aterraliberty&index=1" title="A Terra Liberty — Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+              <a href="https://www.youtube.com/@aterraliberty" target="_blank" rel="noopener" class="video-channel-link">
+                <div class="video-channel-link__inner">
+                  <div class="video-channel-link__icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+                  </div>
+                  <span class="video-channel-link__text">Subscribe for More</span>
+                  <span class="video-channel-link__handle">@aterraliberty</span>
+                </div>
+              </a>
             </div>
             <div class="video-card__body">
               <h3 class="video-card__title">More from A Terra Liberty</h3>
@@ -344,8 +369,9 @@
       </div>
       <div class="footer-newsletter">
         <p>Letters from Portugal — no sponsors, no noise.</p>
-        <form class="newsletter-form footer-newsletter-form" onsubmit="return false;">
-          <input type="email" placeholder="Your email address">
+        <form class="newsletter-form footer-newsletter-form" action="https://atl-form-handler.coddinging.workers.dev/subscribe" method="POST">
+          <input type="email" name="email" placeholder="Your email address" required>
+          <input type="hidden" name="_subject" value="New subscriber — A Terra Liberty">
           <button type="submit">Subscribe</button>
         </form>
       </div>
@@ -360,6 +386,77 @@
     const toggle = document.getElementById('navToggle');
     const nav = document.getElementById('siteNav');
     toggle.addEventListener('click', () => nav.classList.toggle('open'));
+  </script>
+
+  <!-- ATL Analytics & Form Handler — async, non-blocking, no UI changes -->
+  <!-- After deploying workers: replace coddinging in ANALYTICS + FORM_API below -->
+  <script>
+  !function(){
+    var ANALYTICS = 'https://atl-analytics.coddinging.workers.dev/track';
+    var FORM_API  = 'https://atl-form-handler.coddinging.workers.dev';
+    var PAGE      = 'index';
+    var ref = document.referrer;
+    var source = ref.indexOf('google') > -1 ? 'google'
+               : ref.indexOf('youtube') > -1 ? 'youtube'
+               : ref.indexOf('instagram') > -1 || ref.indexOf('facebook') > -1 ? 'social'
+               : ref ? 'referral' : 'direct';
+    var device = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+
+    function track(event, extra) {
+      try {
+        var payload = JSON.stringify(Object.assign({ event: event, page: PAGE, source: source, device: device }, extra || {}));
+        if (navigator.sendBeacon) { navigator.sendBeacon(ANALYTICS, payload); }
+        else { fetch(ANALYTICS, { method: 'POST', body: payload, keepalive: true }).catch(function(){}); }
+      } catch(e) {}
+    }
+
+    track('pageview');
+
+    // YouTube button clicks
+    [].forEach.call(document.querySelectorAll('a[href*="youtube.com"]'), function(el) {
+      el.addEventListener('click', function() { track('click', { type: 'youtube' }); });
+    });
+
+    // Post card / list item clicks
+    [].forEach.call(document.querySelectorAll('.post-card a[href], .post-list-item a[href]'), function(el) {
+      el.addEventListener('click', function() {
+        var slug = (this.pathname || '').split('/').pop().replace('.html', '');
+        if (slug && slug !== '#') track('click', { type: 'post', slug: slug });
+      });
+    });
+
+    // Subscribe button clicks
+    [].forEach.call(document.querySelectorAll('form button[type="submit"]'), function(el) {
+      el.closest('form').addEventListener('submit', function() { track('click', { type: 'subscribe' }); }, { once: true });
+    });
+
+    // Time on page
+    var t0 = Date.now();
+    window.addEventListener('pagehide', function() {
+      track('time', { seconds: Math.round((Date.now() - t0) / 1000) });
+    });
+
+    // Form handler — intercept newsletter forms, POST to Worker
+    [].forEach.call(document.querySelectorAll('form[action*="atl-form-handler"]'), function(form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var data = {};
+        [].forEach.call(new FormData(form), function(v, k) { data[k] = v; });
+        var isContact = !!data.message;
+        var url = isContact ? FORM_API + '/contact' : FORM_API + '/subscribe';
+        var btn = form.querySelector('button[type="submit"]');
+        var orig = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+        fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+          .then(function(r) { return r.json(); })
+          .then(function() {
+            track('click', { type: isContact ? 'contact_sent' : 'subscribe_success' });
+            if (btn) { btn.textContent = '✓ Done!'; }
+          })
+          .catch(function() { if (btn) { btn.disabled = false; btn.textContent = orig; } });
+      });
+    });
+  }();
   </script>
 
 </body>

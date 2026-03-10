@@ -291,5 +291,23 @@
     toggle.addEventListener('click', () => nav.classList.toggle('open'));
   </script>
 
+  <!-- ATL Analytics — async, non-blocking, no UI changes -->
+  <script>
+  !function(){
+    var ANALYTICS='https://atl-analytics.coddinging.workers.dev/track';
+    var PAGE='shop';
+    var t0=Date.now();
+    function send(data){try{if(navigator.sendBeacon)navigator.sendBeacon(ANALYTICS,new Blob([JSON.stringify(data)],{type:'application/json'}));else fetch(ANALYTICS,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),keepalive:true});}catch(e){}}
+    send({event:'pageview',page:PAGE});
+    document.addEventListener('click',function(e){
+      var el=e.target.closest('a[href*="youtube"],a[href*="youtu.be"],.video-channel-link');
+      if(el)send({event:'click',type:'youtube',page:PAGE});
+      var sb=e.target.closest('.subscribe-btn,button[type="submit"]');
+      if(sb)send({event:'click',type:'subscribe',page:PAGE});
+    });
+    window.addEventListener('pagehide',function(){send({event:'time',page:PAGE,seconds:Math.round((Date.now()-t0)/1000)});});
+  }();
+  </script>
+
 </body>
 </html>

@@ -318,5 +318,23 @@
     toggle.addEventListener('click', () => nav.classList.toggle('open'));
   </script>
 
+  <!-- ATL Analytics — async, non-blocking, no UI changes -->
+  <script>
+  !function(){
+    var ANALYTICS='https://atl-analytics.coddinging.workers.dev/track';
+    var FORM_API='https://atl-form-handler.coddinging.workers.dev';
+    var PAGE='healthnotes';
+    var ref=document.referrer;
+    var source=ref.indexOf('google')>-1?'google':ref.indexOf('youtube')>-1?'youtube':ref.indexOf('instagram')>-1||ref.indexOf('facebook')>-1?'social':ref?'referral':'direct';
+    var device=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'mobile':'desktop';
+    function track(e,x){try{var p=JSON.stringify(Object.assign({event:e,page:PAGE,source:source,device:device},x||{}));if(navigator.sendBeacon){navigator.sendBeacon(ANALYTICS,p);}else{fetch(ANALYTICS,{method:'POST',body:p,keepalive:true}).catch(function(){});}}catch(err){}}
+    track('pageview');
+    [].forEach.call(document.querySelectorAll('a[href*="youtube.com"]'),function(el){el.addEventListener('click',function(){track('click',{type:'youtube'});});});
+    [].forEach.call(document.querySelectorAll('form button[type="submit"]'),function(el){el.closest('form').addEventListener('submit',function(){track('click',{type:'subscribe'});},{once:true});});
+    var t0=Date.now();window.addEventListener('pagehide',function(){track('time',{seconds:Math.round((Date.now()-t0)/1000)});});
+    [].forEach.call(document.querySelectorAll('form[action*="atl-form-handler"]'),function(form){form.addEventListener('submit',function(e){e.preventDefault();var data={};[].forEach.call(new FormData(form),function(v,k){data[k]=v;});var btn=form.querySelector('button[type="submit"]');var orig=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='Sending…';}fetch(FORM_API+'/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){return r.json();}).then(function(){track('click',{type:'subscribe_success'});if(btn)btn.textContent='✓ Done!';}).catch(function(){if(btn){btn.disabled=false;btn.textContent=orig;}});});});
+  }();
+  </script>
+
 </body>
 </html>

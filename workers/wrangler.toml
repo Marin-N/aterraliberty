@@ -1,0 +1,45 @@
+# ==============================================================
+# A Terra Liberty — Cloudflare Workers Configuration
+# ==============================================================
+#
+# SETUP STEPS (do these once before deploying):
+#
+# 1. Cloudflare Account ID is already set: 5335a177347ec84a4b09fd9d80fa4f21
+#
+# 2. Create KV namespaces in Cloudflare Dashboard:
+#    Workers & Pages → KV → Create namespace
+#    Create: "ATL_DATA" and "ATL_ANALYTICS"
+#    Replace the KV IDs below with the real ones
+#
+# 3. Set secrets via Wrangler CLI (never hardcode these):
+#    wrangler secret put TELEGRAM_BOT_TOKEN
+#    → enter:  8723872462:AAGqSMIQesPLJdZBjhVHQLmicsuFZg_fwnQ
+#
+# 4. Deploy form handler:
+#    cd workers && wrangler deploy form-handler.js
+#
+# 5. Deploy analytics tracker (uses separate config below):
+#    cd workers && wrangler deploy analytics-tracker.js --config wrangler.analytics.toml
+#
+# 6. After deploying, note the worker URLs shown in terminal:
+#    They look like: https://atl-form-handler.YOUR_ACCOUNT.workers.dev
+#    Update FORM_API and ANALYTICS vars in the tracking script
+#    (search for coddinging in all HTML files)
+# ==============================================================
+
+# ── Form Handler Worker ────────────────────────────────────────
+name                = "atl-form-handler"
+main                = "form-handler.js"
+compatibility_date  = "2024-09-23"
+account_id          = "5335a177347ec84a4b09fd9d80fa4f21"
+
+[[kv_namespaces]]
+binding    = "ATL_DATA"
+id         = "YOUR_ATL_DATA_KV_NAMESPACE_ID"
+preview_id = "YOUR_ATL_DATA_KV_PREVIEW_ID"
+
+[vars]
+TELEGRAM_CHAT_ID = "569994286"
+
+# Secrets set via CLI (wrangler secret put TELEGRAM_BOT_TOKEN):
+# TELEGRAM_BOT_TOKEN = <set via CLI, not here>

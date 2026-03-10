@@ -1,0 +1,12 @@
+# ── Analytics Tracker Worker ────────────────────────────────────
+# Deploy with: wrangler deploy analytics-tracker.js --config wrangler.analytics.toml
+
+name                = "atl-analytics"
+main                = "analytics-tracker.js"
+compatibility_date  = "2024-09-23"
+account_id          = "5335a177347ec84a4b09fd9d80fa4f21"
+
+[[kv_namespaces]]
+binding    = "ATL_ANALYTICS"
+id         = "YOUR_ATL_ANALYTICS_KV_NAMESPACE_ID"
+preview_id = "YOUR_ATL_ANALYTICS_KV_PREVIEW_ID"
