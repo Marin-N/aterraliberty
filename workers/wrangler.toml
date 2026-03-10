@@ -34,8 +34,8 @@ account_id          = "5335a177347ec84a4b09fd9d80fa4f21"
 
 [[kv_namespaces]]
 binding    = "ATL_DATA"
-id         = "YOUR_ATL_DATA_KV_NAMESPACE_ID"
-preview_id = "YOUR_ATL_DATA_KV_PREVIEW_ID"
+id         = "d8172cd21f1f42ffa7c7edb24f035fae"
+preview_id = "d8172cd21f1f42ffa7c7edb24f035fae"
 
 [vars]
 TELEGRAM_CHAT_ID = "569994286"

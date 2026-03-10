@@ -8,5 +8,5 @@ account_id          = "5335a177347ec84a4b09fd9d80fa4f21"
 
 [[kv_namespaces]]
 binding    = "ATL_ANALYTICS"
-id         = "YOUR_ATL_ANALYTICS_KV_NAMESPACE_ID"
-preview_id = "YOUR_ATL_ANALYTICS_KV_PREVIEW_ID"
+id         = "c0ddd31b8af14572b1995ddd7eac7b0f"
+preview_id = "c0ddd31b8af14572b1995ddd7eac7b0f"
