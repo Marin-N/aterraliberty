@@ -301,7 +301,7 @@
     [].forEach.call(document.querySelectorAll('form[action*="atl-form-handler"]'), function(form) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        var data = {}; [].forEach.call(new FormData(form), function(v, k) { data[k] = v; });
+        var data = {}; new FormData(form).forEach(function(v, k) { data[k] = v; });
         data.referrer = document.referrer;
         if (!data.source) data.source = 'newsletter';
         var isContact = !!data.message;

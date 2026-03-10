@@ -441,7 +441,7 @@
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         var data = {};
-        [].forEach.call(new FormData(form), function(v, k) { data[k] = v; });
+        new FormData(form).forEach(function(v, k) { data[k] = v; });
         data.referrer = document.referrer;
         if (!data.source) data.source = 'homepage';
         var isContact = !!data.message;
