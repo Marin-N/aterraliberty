@@ -1739,25 +1739,37 @@ p:last-child { margin-bottom: 0; }
   .footer-newsletter-form button {
     width: 100%;
   }
-  /* Nav hamburger — prevent overlap with logo */
+  /* Nav hamburger — right side, logo truly centered */
   .site-header__top {
     display: flex;
     align-items: center;
     padding: 0.75rem 0;
   }
+  /* Tagline becomes invisible left spacer (same width as toggle = 44px)
+     so logo is perfectly centered between spacer and toggle */
   .site-header__tagline {
-    display: none;
+    order: 1;
+    visibility: hidden;
+    flex-shrink: 0;
+    width: 44px;
+    font-size: 0;
+    margin: 0;
+    padding: 0;
   }
   .site-header__brand {
+    order: 2;
     flex: 1;
     text-align: center;
   }
   .nav-toggle {
+    order: 3;
     display: flex;
     position: relative;
     right: auto;
     top: auto;
     flex-shrink: 0;
+    width: 44px;
+    justify-content: flex-end;
   }
   .site-nav {
     display: none;
