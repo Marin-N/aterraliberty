@@ -13,7 +13,7 @@
 #
 # 3. Set secrets via Wrangler CLI (never hardcode these):
 #    wrangler secret put TELEGRAM_BOT_TOKEN
-#    → enter:  8723872462:AAGqSMIQesPLJdZBjhVHQLmicsuFZg_fwnQ
+#    → enter:  8353197963:AAGTNmuKylDSss5aMCW_S2CFzF5PYx9y8sU
 #
 # 4. Deploy form handler:
 #    cd workers && wrangler deploy form-handler.js
@@ -21,10 +21,9 @@
 # 5. Deploy analytics tracker (uses separate config below):
 #    cd workers && wrangler deploy analytics-tracker.js --config wrangler.analytics.toml
 #
-# 6. After deploying, note the worker URLs shown in terminal:
-#    They look like: https://atl-form-handler.YOUR_ACCOUNT.workers.dev
-#    Update FORM_API and ANALYTICS vars in the tracking script
-#    (search for coddinging in all HTML files)
+# 6. Worker URLs (already hardcoded in all HTML tracking scripts):
+#    https://atl-form-handler.coddinging.workers.dev
+#    https://atl-analytics.coddinging.workers.dev
 # ==============================================================
 
 # ── Form Handler Worker ────────────────────────────────────────

@@ -4,3 +4,5 @@ pending_task.txt
 __pycache__/
 *.pyc
 .claude/
+.wrangler/
+node_modules/
