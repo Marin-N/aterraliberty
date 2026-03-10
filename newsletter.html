@@ -305,6 +305,11 @@
         data.referrer = document.referrer;
         if (!data.source) data.source = 'newsletter';
         var isContact = !!data.message;
+        if (!isContact) {
+          var interests = [];
+          document.querySelectorAll('input[name="interests"]:checked').forEach(function(cb) { interests.push(cb.value); });
+          data.interests = interests;
+        }
         var url = isContact ? FORM_API + '/contact' : FORM_API + '/subscribe';
         var btn = form.querySelector('button[type="submit"]'); var orig = btn ? btn.textContent : '';
         if (btn) { btn.disabled = true; btn.textContent = 'Sending\u2026'; }
