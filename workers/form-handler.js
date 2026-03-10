@@ -29,11 +29,19 @@ export default {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
 
+    const url = new URL(request.url);
+
+    // GET /subscribers/count — used by aterraliberty_bot.py
+    if (request.method === 'GET' && url.pathname === '/subscribers/count') {
+      const raw   = await env.ATL_DATA.get('stats:subscriber_count') || '0';
+      const count = parseInt(raw, 10) || 0;
+      return jsonResponse({ ok: true, count });
+    }
+
     if (request.method !== 'POST') {
       return jsonResponse({ ok: false, error: 'Method not allowed' }, 405);
     }
 
-    const url = new URL(request.url);
     let body;
 
     try {

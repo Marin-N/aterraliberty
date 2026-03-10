@@ -28,13 +28,25 @@
 export default {
   async fetch(request, env) {
     const CORS = {
-      'Access-Control-Allow-Origin': '*',  // analytics can come from any origin
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS });
+    }
+
+    const url = new URL(request.url);
+
+    // GET /stats?date=YYYY-MM-DD — used by aterraliberty_bot.py
+    if (request.method === 'GET' && url.pathname === '/stats') {
+      const date = url.searchParams.get('date') || new Date().toISOString().slice(0, 10);
+      const day  = await env.ATL_ANALYTICS.get(`stats:${date}`, { type: 'json' }) || emptyDay();
+      return new Response(JSON.stringify(day), {
+        status: 200,
+        headers: { ...CORS, 'Content-Type': 'application/json' },
+      });
     }
 
     if (request.method !== 'POST') {
