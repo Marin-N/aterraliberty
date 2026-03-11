@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — A Terra Liberty</title>
+  <style>
+    /* ── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #f5f0eb;
+      color: #2c2416;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    a { color: #c17d4a; }
+
+    /* ── Password Gate ─────────────────────────────────────── */
+    #gate {
+      position: fixed; inset: 0;
+      background: #f5f0eb;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+      padding: 1rem;
+    }
+    #gate.hidden { display: none; }
+
+    .gate-card {
+      background: #fff;
+      border: 1px solid #d9cfc4;
+      padding: 2.5rem 2rem;
+      width: 100%; max-width: 360px;
+      text-align: center;
+    }
+    .gate-card h1 { font-size: 1.5rem; margin-bottom: 0.2rem; }
+    .gate-tagline {
+      font-size: 0.72rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: #8a7a6a; margin-bottom: 2rem;
+    }
+    .gate-card input[type="password"] {
+      width: 100%; padding: 0.7rem 1rem;
+      border: 1px solid #d9cfc4;
+      font-family: Georgia, serif; font-size: 1rem;
+      background: #faf8f5; color: #2c2416;
+      margin-bottom: 0.75rem; outline: none;
+    }
+    .gate-card input:focus { border-color: #c17d4a; }
+    .gate-error {
+      font-size: 0.82rem; color: #b94a4a; margin-top: 0.5rem;
+      display: none;
+    }
+
+    /* ── Admin Shell ───────────────────────────────────────── */
+    #admin { display: none; }
+    #admin.visible { display: block; }
+
+    .admin-header {
+      background: #2c2416; color: #f5efe6;
+      padding: 0.85rem 1.5rem;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem;
+    }
+    .admin-header h1 { font-size: 1rem; letter-spacing: 0.04em; }
+    .admin-header-right {
+      display: flex; align-items: center; gap: 1rem; flex-shrink: 0;
+    }
+    .session-timer {
+      font-size: 0.72rem; color: #a89880; font-family: monospace;
+    }
+    .btn-logout {
+      background: none; border: 1px solid #a89880; color: #a89880;
+      padding: 0.3rem 0.75rem; cursor: pointer;
+      font-family: Georgia, serif; font-size: 0.75rem;
+    }
+    .btn-logout:hover { border-color: #f5efe6; color: #f5efe6; }
+
+    /* ── Tab Nav ───────────────────────────────────────────── */
+    .tab-nav {
+      background: #ede7df; border-bottom: 1px solid #d9cfc4;
+      display: flex; overflow-x: auto; scrollbar-width: none;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 0.8rem 1.2rem;
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      font-family: Georgia, serif; font-size: 0.8rem;
+      color: #6b5c47; cursor: pointer; white-space: nowrap;
+    }
+    .tab-btn:hover { color: #2c2416; }
+    .tab-btn.active { color: #2c2416; border-bottom-color: #c17d4a; font-weight: bold; }
+
+    /* ── Content ───────────────────────────────────────────── */
+    .admin-body { max-width: 860px; margin: 0 auto; padding: 1.8rem 1rem 4rem; }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .section-title {
+      font-size: 1.15rem; margin-bottom: 0.25rem;
+      padding-bottom: 0.5rem; border-bottom: 1px solid #d9cfc4;
+    }
+    .section-desc {
+      font-size: 0.8rem; color: #8a7a6a; margin: 0.4rem 0 1.6rem;
+    }
+
+    /* ── Form Elements ─────────────────────────────────────── */
+    .field { margin-bottom: 1.1rem; }
+    .field label {
+      display: block; font-size: 0.74rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: #6b5c47; margin-bottom: 0.3rem;
+    }
+    .field input[type="text"],
+    .field input[type="date"],
+    .field input[type="url"],
+    .field input[type="email"],
+    .field select,
+    .field textarea {
+      width: 100%; padding: 0.6rem 0.85rem;
+      border: 1px solid #d9cfc4;
+      font-family: Georgia, serif; font-size: 0.9rem;
+      background: #fff; color: #2c2416;
+      outline: none; appearance: none;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-color: #c17d4a; }
+    .field textarea { resize: vertical; }
+    .hint {
+      font-size: 0.74rem; color: #a89880; margin-top: 0.25rem;
+    }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) {
+      .row2, .row3 { grid-template-columns: 1fr; }
+    }
+
+    /* ── Buttons ───────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      padding: 0.65rem 1.5rem;
+      background: #c17d4a; color: #fff;
+      border: none; cursor: pointer;
+      font-family: Georgia, serif; font-size: 0.9rem;
+      letter-spacing: 0.02em; transition: background 0.15s;
+    }
+    .btn:hover { background: #a8673c; }
+    .btn:disabled { background: #c9b8a8; cursor: not-allowed; }
+    .btn-outline {
+      background: #fff; color: #2c2416;
+      border: 1px solid #2c2416;
+    }
+    .btn-outline:hover { background: #f5f0eb; }
+    .btn-danger {
+      background: #b94a4a;
+    }
+    .btn-danger:hover { background: #963a3a; }
+    .btn-sm { padding: 0.38rem 0.9rem; font-size: 0.78rem; }
+    .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+    /* ── Output Boxes ──────────────────────────────────────── */
+    .output-box {
+      margin-top: 1.5rem;
+      border: 1px solid #d9cfc4; background: #fff;
+    }
+    .output-header {
+      background: #ede7df; padding: 0.55rem 0.9rem;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid #d9cfc4;
+    }
+    .output-label {
+      font-size: 0.72rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #6b5c47;
+    }
+    .output-box pre,
+    .output-box textarea.copyable {
+      padding: 0.9rem;
+      font-family: 'Courier New', monospace; font-size: 0.75rem;
+      line-height: 1.55; color: #2c2416; background: #faf8f5;
+      white-space: pre-wrap; word-break: break-word;
+      max-height: 380px; overflow-y: auto;
+      width: 100%; border: none; outline: none; resize: vertical;
+    }
+    .output-note {
+      padding: 0.65rem 0.9rem;
+      font-size: 0.78rem; color: #6b5c47;
+      border-top: 1px solid #eee; background: #f9f6f2;
+    }
+    .git-block {
+      background: #1e1710; padding: 1rem;
+    }
+    .git-block .git-label {
+      font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #a89880;
+      font-family: Georgia, serif; margin-bottom: 0.4rem;
+    }
+    .git-block code {
+      display: block; font-family: 'Courier New', monospace;
+      font-size: 0.8rem; color: #a8d5a2; line-height: 2;
+    }
+
+    /* ── Alerts ────────────────────────────────────────────── */
+    .alert {
+      padding: 0.75rem 1rem; font-size: 0.82rem;
+      border-left: 3px solid; margin-bottom: 0.75rem;
+    }
+    .alert-ok  { background: #f0fdf4; border-color: #4a9a6a; color: #1a5a35; }
+    .alert-err { background: #fdf0f0; border-color: #b94a4a; color: #7a1a1a; }
+    .alert-info{ background: #f0f4fd; border-color: #4a6a9a; color: #1a355a; }
+    .alert-warn{ background: #fef9f0; border-color: #c17d4a; color: #7a4e1a; }
+
+    /* ── Spinner ───────────────────────────────────────────── */
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid #d9cfc4; border-top-color: #c17d4a;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading { color: #8a7a6a; font-size: 0.84rem; }
+
+    /* ── Table ─────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th {
+      text-align: left; padding: 0.55rem 0.75rem;
+      background: #ede7df; border-bottom: 2px solid #d9cfc4;
+      font-size: 0.7rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #6b5c47; font-weight: normal;
+    }
+    td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid #ede7df; vertical-align: top;
+    }
+    tr:hover td { background: #faf8f5; }
+    .tag {
+      display: inline-block; background: #ede7df; color: #6b5c47;
+      font-size: 0.66rem; padding: 0.12rem 0.4rem; margin: 0.1rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Stats Cards ───────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem; margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: #fff; border: 1px solid #d9cfc4;
+      padding: 1.1rem 0.9rem; text-align: center;
+    }
+    .stat-num  { font-size: 1.8rem; color: #c17d4a; display: block; line-height: 1; }
+    .stat-label{ font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #8a7a6a; margin-top: 0.25rem; }
+
+    /* ── Newsletter Editor ─────────────────────────────────── */
+    .editor-toolbar {
+      display: flex; gap: 0.3rem; flex-wrap: wrap;
+      padding: 0.4rem 0.5rem;
+      background: #ede7df; border: 1px solid #d9cfc4; border-bottom: none;
+    }
+    .toolbar-btn {
+      padding: 0.25rem 0.6rem; background: #fff;
+      border: 1px solid #d9cfc4; cursor: pointer;
+      font-size: 0.8rem; color: #2c2416;
+      font-family: Georgia, serif;
+    }
+    .toolbar-btn:hover { background: #f5f0eb; border-color: #c17d4a; }
+    .toolbar-btn b { font-weight: bold; }
+    .toolbar-btn i { font-style: italic; }
+    .editor-area {
+      min-height: 220px; padding: 0.85rem;
+      border: 1px solid #d9cfc4; background: #fff;
+      font-family: Georgia, serif; font-size: 0.92rem;
+      line-height: 1.7; outline: none; color: #2c2416;
+    }
+    .editor-area:focus { border-color: #c17d4a; }
+    .editor-area h2 { font-size: 1.1rem; margin: 1rem 0 0.4rem; }
+    .editor-area p { margin-bottom: 0.75rem; }
+
+    .interests-row {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.4rem;
+    }
+    .interest-check {
+      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.84rem; cursor: pointer;
+    }
+    .interest-check input { cursor: pointer; }
+
+    /* ── Preview Modal ─────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex; align-items: flex-start; justify-content: center;
+      z-index: 1000; padding: 1.5rem; overflow-y: auto;
+      display: none;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; max-width: 640px; width: 100%;
+      border: 1px solid #d9cfc4; position: relative;
+    }
+    .modal-header {
+      background: #2c2416; color: #f5efe6;
+      padding: 0.75rem 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h3 { font-size: 0.9rem; }
+    .modal-close {
+      background: none; border: none; color: #a89880;
+      cursor: pointer; font-size: 1.2rem; line-height: 1;
+    }
+    .modal-close:hover { color: #f5efe6; }
+    .modal-body { padding: 1.5rem; max-height: 75vh; overflow-y: auto; }
+    .email-preview {
+      font-family: Georgia, serif; font-size: 15px;
+      color: #2c2416; line-height: 1.7;
+      border-top: 2px solid #c17d4a; padding-top: 1rem;
+    }
+    .email-preview h2 { font-size: 1.05rem; margin: 1rem 0 0.4rem; }
+    .email-preview p { margin-bottom: 0.75rem; }
+    .email-preview blockquote {
+      border-left: 3px solid #c17d4a; margin: 1rem 0;
+      padding: 0.5rem 1rem; color: #6b5c47;
+    }
+
+    /* ── Confirm Send Box ──────────────────────────────────── */
+    .confirm-box {
+      background: #fdf0f0; border: 1px solid #b94a4a;
+      padding: 1rem; margin-top: 1rem; display: none;
+    }
+    .confirm-box.open { display: block; }
+    .confirm-box p { font-size: 0.85rem; margin-bottom: 0.75rem; color: #7a1a1a; }
+    .confirm-box input {
+      padding: 0.5rem 0.75rem; border: 1px solid #b94a4a;
+      font-family: monospace; font-size: 0.95rem;
+      color: #7a1a1a; background: #fff; width: 140px; outline: none;
+    }
+
+    /* ── Divider ───────────────────────────────────────────── */
+    hr.divider { border: none; border-top: 1px solid #d9cfc4; margin: 1.5rem 0; }
+
+    /* ── Subscriber top row ────────────────────────────────── */
+    .sub-meta {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .sub-pill {
+      background: #fff; border: 1px solid #d9cfc4;
+      padding: 0.5rem 1rem; font-size: 0.82rem; color: #6b5c47;
+    }
+    .sub-pill strong { color: #2c2416; font-size: 1.05rem; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  PASSWORD GATE                                             -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="gate">
+  <div class="gate-card">
+    <h1>A Terra Liberty</h1>
+    <p class="gate-tagline">Admin Panel</p>
+    <input type="password" id="pwInput" placeholder="Password" autocomplete="current-password">
+    <button class="btn" style="width:100%" onclick="doLogin()">Enter</button>
+    <p class="gate-error" id="pwError">Incorrect password. Try again.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  ADMIN PANEL                                               -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="admin">
+  <header class="admin-header">
+    <h1>A Terra Liberty &mdash; Admin</h1>
+    <div class="admin-header-right">
+      <span class="session-timer" id="timerDisplay">30:00</span>
+      <button class="btn-logout" onclick="doLogout()">Log out</button>
+    </div>
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active"  onclick="showTab('blog',this)">Blog Post</button>
+    <button class="tab-btn" onclick="showTab('health',this)">Health Note</button>
+    <button class="tab-btn" onclick="showTab('video',this)">YouTube</button>
+    <button class="tab-btn" onclick="showTab('subscribers',this)">Subscribers</button>
+    <button class="tab-btn" onclick="showTab('analytics',this)">Analytics</button>
+    <button class="tab-btn" onclick="showTab('newsletter',this)">Newsletter</button>
+  </nav>
+
+  <div class="admin-body">
+
+    <!-- ───────────────────────────────────────────────────── -->
+    <!-- 1 · NEW BLOG POST                                     -->
+    <!-- ───────────────────────────────────────────────────── -->
+    <div id="pane-blog" class="tab-pane active">
+      <h2 class="section-title">New Blog Post</h2>
+      <p class="section-desc">Fetches the template from GitHub, fills all fields, generates a complete ready-to-use HTML file.</p>
+
+      <div class="field">
+        <label>Post Title</label>
+        <input type="text" id="b-title" oninput="autoSlug()" placeholder="e.g. What the Portuguese Market Taught Me About Eating">
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Slug (filename)</label>
+          <input type="text" id="b-slug" placeholder="what-the-portuguese-market-taught-me">
+          <p class="hint">Becomes posts/[slug].html</p>
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="b-cat">
+            <option value="Slow Living">Slow Living</option>
+            <option value="Food &amp; Health">Food &amp; Health</option>
+            <option value="Portugal Life">Portugal Life</option>
+            <option value="Longevity">Longevity</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="b-date">
+        </div>
+        <div class="field">
+          <label>Featured Image URL</label>
+          <input type="text" id="b-img" placeholder="https://... or content/images/filename.jpeg">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Meta Description</label>
+        <textarea id="b-meta" rows="2" placeholder="1–2 sentences, max 160 characters. What this post is about."></textarea>
+        <p class="hint" id="b-meta-count">0 / 160</p>
+      </div>
+
+      <div class="field">
+        <label>Introduction / Opening Paragraph</label>
+        <textarea id="b-intro" rows="3" placeholder="Hook the reader. Personal, specific, present tense."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Full Body</label>
+        <textarea id="b-body" rows="14" placeholder="Write sections here. Use &lt;h2&gt;, &lt;p&gt;, &lt;blockquote&gt; — or plain paragraphs separated by blank lines."></textarea>
+      </div>
+
+      <button class="btn" id="b-btn" onclick="generatePost()">Generate Post HTML</button>
+
+      <div id="b-out" style="display:none">
+        <div class="output-box">
+          <div class="output-header">
+            <span class="output-label">posts/<span id="b-out-slug"></span>.html</span>
+            <button class="btn btn-sm" onclick="copyBox('b-html')">Copy HTML</button>
+          </div>
+          <textarea class="copyable" id="b-html" readonly rows="20"></textarea>
+        </div>
+
+        <hr class="divider">
+        <p style="font-size:0.8rem;color:#6b5c47;margin-bottom:0.6rem;font-weight:bold">Git commands</p>
+        <div class="git-block">
+          <p class="git-label">Run from project root:</p>
+          <code id="b-git"></code>
+        </div>
+
+        <div class="output-box" style="margin-top:1.2rem">
+          <div class="output-header">
+            <span class="output-label">journal.html post card — paste near top of post-grid</span>
+            <button class="btn btn-sm" onclick="copyBox('b-card')">Copy Card</button>
+          </div>
+          <textarea class="copyable" id="b-card" readonly rows="10"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────── -->
+    <!-- 2 · NEW HEALTH NOTE                                   -->
+    <!-- ───────────────────────────────────────────────────── -->
+    <div id="pane-health" class="tab-pane">
+      <h2 class="section-title">New Health Note</h2>
+      <p class="section-desc">Generates the HTML block to paste into healthnotes.html</p>
+
+      <div class="row2">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="h-date">
+        </div>
+        <div class="field">
+          <label>Source / Badge <span style="font-size:0.7rem;color:#a89880">(optional)</span></label>
+          <input type="text" id="h-source" placeholder="Reading: Outlive — Peter Attia">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tags <span style="font-size:0.7rem;color:#a89880">(optional)</span></label>
+        <input type="text" id="h-tags" placeholder="Longevity · Sleep · Circadian Rhythm">
+      </div>
+
+      <div class="field">
+        <label>Title</label>
+        <input type="text" id="h-title" placeholder="What I'm learning about...">
+      </div>
+
+      <div class="field">
+        <label>Content</label>
+        <textarea id="h-content" rows="12" placeholder="Write your note. Blank lines become paragraphs. Or paste HTML directly."></textarea>
+      </div>
+
+      <button class="btn" onclick="generateHealthNote()">Generate HTML</button>
+
+      <div id="h-out" style="display:none">
+        <div class="output-box" style="margin-top:1.5rem">
+          <div class="output-header">
+            <span class="output-label">Paste into healthnotes.html</span>
+            <button class="btn btn-sm" onclick="copyBox('h-html')">Copy HTML</button>
+          </div>
+          <textarea class="copyable" id="h-html" readonly rows="14"></textarea>
+          <div class="output-note">
+            Paste <strong>after</strong> the <code>&lt;!-- NOTE 1 --&gt;</code> comment, at the top of the main column inside <code>.content-with-sidebar &gt; div</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────── -->
+    <!-- 3 · YOUTUBE VIDEO                                     -->
+    <!-- ───────────────────────────────────────────────────── -->
+    <div id="pane-video" class="tab-pane">
+      <h2 class="section-title">Add YouTube Video</h2>
+      <p class="section-desc">Paste a YouTube URL or Video ID to generate an embed card</p>
+
+      <div class="field">
+        <label>YouTube URL or Video ID</label>
+        <input type="text" id="v-url" oninput="previewVid()" placeholder="https://youtube.com/watch?v=... or bare video ID">
+        <p class="hint" id="v-id-hint"></p>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Video Title</label>
+          <input type="text" id="v-title" placeholder="e.g. A Slow Morning in Central Portugal">
+        </div>
+        <div class="field">
+          <label>Add to Page</label>
+          <select id="v-page">
+            <option value="journal">journal.html — Latest Videos section</option>
+            <option value="home">index.html — Homepage</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn" onclick="generateVideo()">Generate Embed Card</button>
+
+      <div id="v-out" style="display:none">
+        <div class="output-box" style="margin-top:1.5rem">
+          <div class="output-header">
+            <span class="output-label">Video Card HTML</span>
+            <button class="btn btn-sm" onclick="copyBox('v-html')">Copy HTML</button>
+          </div>
+          <textarea class="copyable" id="v-html" readonly rows="14"></textarea>
+          <div class="output-note" id="v-note"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────── -->
+    <!-- 4 · SUBSCRIBERS                                       -->
+    <!-- ───────────────────────────────────────────────────── -->
+    <div id="pane-subscribers" class="tab-pane">
+      <h2 class="section-title">Subscribers</h2>
+      <p class="section-desc">Live from the Cloudflare Worker KV store</p>
+
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn" id="sub-btn" onclick="loadSubscribers()">Load Subscribers</button>
+        <button class="btn btn-outline" id="sub-csv-btn" style="display:none" onclick="exportCSV()">Export CSV</button>
+      </div>
+
+      <div id="sub-status" style="margin-top:1rem"></div>
+
+      <div id="sub-meta" class="sub-meta" style="display:none;margin-top:1rem">
+        <div class="sub-pill"><strong id="sub-total">—</strong><br>Total in KV</div>
+        <div class="sub-pill"><strong id="sub-loaded">—</strong><br>Records loaded</div>
+      </div>
+
+      <div class="table-wrap" id="sub-table-wrap" style="display:none;margin-top:0.5rem">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Email</th><th>Source</th>
+              <th>Interests</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="sub-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────── -->
+    <!-- 5 · ANALYTICS                                         -->
+    <!-- ───────────────────────────────────────────────────── -->
+    <div id="pane-analytics" class="tab-pane">
+      <h2 class="section-title">Today's Analytics</h2>
+      <p class="section-desc" id="ana-date-label">Stats for today</p>
+
+      <button class="btn" onclick="loadAnalytics()">Load Stats</button>
+
+      <div id="ana-status" style="margin-top:1rem"></div>
+      <div id="ana-out" style="display:none;margin-top:1.5rem"></div>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────── -->
+    <!-- 6 · SEND NEWSLETTER                                   -->
+    <!-- ───────────────────────────────────────────────────── -->
+    <div id="pane-newsletter" class="tab-pane">
+      <h2 class="section-title">Send Newsletter</h2>
+      <p class="section-desc">Composes and sends to subscribers via the Cloudflare Worker + Resend</p>
+
+      <div class="field">
+        <label>Subject</label>
+        <input type="text" id="nl-subject" placeholder="e.g. A note from the olive grove — March 2026">
+      </div>
+
+      <div class="field">
+        <label>Preview Text <span style="font-size:0.7rem;color:#a89880">(shows in inbox before opening)</span></label>
+        <input type="text" id="nl-preview" placeholder="The thing about slow mornings is...">
+      </div>
+
+      <div class="field">
+        <label>Body</label>
+        <div class="editor-toolbar" id="nl-toolbar">
+          <button class="toolbar-btn" onclick="fmt('bold')" title="Bold"><b>B</b></button>
+          <button class="toolbar-btn" onclick="fmt('italic')" title="Italic"><i>I</i></button>
+          <button class="toolbar-btn" onclick="fmtH2()" title="Heading 2">H2</button>
+          <button class="toolbar-btn" onclick="fmtLink()" title="Insert link">Link</button>
+          <button class="toolbar-btn" onclick="fmtQuote()" title="Blockquote">❝</button>
+          <button class="toolbar-btn" onclick="fmtClear()" title="Clear formatting" style="color:#888">T&times;</button>
+          <button class="toolbar-btn btn-sm" style="margin-left:auto;font-size:0.72rem;color:#6b5c47" onclick="toggleSource()">Source HTML</button>
+        </div>
+        <div class="editor-area" id="nl-editor" contenteditable="true"
+          placeholder="Write your letter here…"></div>
+        <textarea id="nl-source" style="display:none;width:100%;min-height:200px;
+          font-family:monospace;font-size:0.78rem;padding:0.75rem;
+          border:1px solid #d9cfc4;border-top:none;outline:none"
+          placeholder="Raw HTML source"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Filter by Interests <span style="font-size:0.7rem;color:#a89880">(empty = send to everyone)</span></label>
+        <div class="interests-row">
+          <label class="interest-check"><input type="checkbox" id="nl-i-journal" value="journal"> Journal Posts</label>
+          <label class="interest-check"><input type="checkbox" id="nl-i-health"  value="health">  Health Notes</label>
+          <label class="interest-check"><input type="checkbox" id="nl-i-portugal" value="portugal"> Portugal Life</label>
+          <label class="interest-check"><input type="checkbox" id="nl-i-shop"    value="shop">   Shop Updates</label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="previewNewsletter()">Preview Email</button>
+        <button class="btn btn-outline" id="nl-test-btn" onclick="sendTest()">Send TEST to coddinging@gmail.com</button>
+        <button class="btn btn-danger"  onclick="openConfirm()">Send to ALL Subscribers</button>
+      </div>
+
+      <div class="confirm-box" id="confirm-box">
+        <p><strong>This will send to all matching subscribers.</strong> This cannot be undone. Type <code>SEND</code> to confirm:</p>
+        <input type="text" id="confirm-input" placeholder="SEND" oninput="checkConfirm()">
+        <button class="btn btn-danger btn-sm" id="confirm-btn" onclick="sendAll()" disabled style="margin-left:0.75rem">Send Now</button>
+        <button class="btn btn-outline btn-sm" onclick="closeConfirm()" style="margin-left:0.5rem">Cancel</button>
+      </div>
+
+      <div id="nl-status" style="margin-top:1rem"></div>
+    </div>
+
+  </div><!-- /.admin-body -->
+</div><!-- /#admin -->
+
+<!-- ── Email Preview Modal ─────────────────────────────────── -->
+<div class="modal-overlay" id="preview-modal" onclick="closePreviewModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Email Preview</h3>
+      <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.78rem;color:#8a7a6a;margin-bottom:0.5rem">
+        Subject: <strong id="preview-subject"></strong>
+      </p>
+      <div class="email-preview" id="preview-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  SCRIPT                                                    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ── Constants ─────────────────────────────────────────────────
+const PASSWORD_HASH = '7b9063b279a18dd730013ef215fdd1b6fa1f75d7dc7ccf1977ab7feb6d9cf2a8';
+const ADMIN_KEY     = 'aterra2026';
+const FORM_WORKER   = 'https://atl-form-handler.coddinging.workers.dev';
+const ANA_WORKER    = 'https://atl-analytics.coddinging.workers.dev';
+const TEMPLATE_URL  = 'https://raw.githubusercontent.com/Marin-N/aterraliberty/main/posts/_template.html';
+const TIMEOUT_MS    = 30 * 60 * 1000; // 30 minutes
+
+// ── Init ──────────────────────────────────────────────────────
+(function init() {
+  // Check existing session
+  const saved = sessionStorage.getItem('atl_admin');
+  if (saved === PASSWORD_HASH) { unlock(); return; }
+
+  // Enter key on password field
+  document.getElementById('pwInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  // Set today defaults
+  const today = todayISO();
+  setIfExists('b-date', today);
+  setIfExists('h-date', today);
+
+  // Analytics date label
+  const el = document.getElementById('ana-date-label');
+  if (el) el.textContent = 'Stats for ' + formatDate(today);
+
+  // Meta description counter
+  const metaEl = document.getElementById('b-meta');
+  if (metaEl) metaEl.addEventListener('input', () => {
+    document.getElementById('b-meta-count').textContent =
+      metaEl.value.length + ' / 160';
+  });
+})();
+
+function setIfExists(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+// ── Auth ──────────────────────────────────────────────────────
+async function doLogin() {
+  const pw = document.getElementById('pwInput').value;
+  if (!pw) return;
+  const hash = await sha256(pw);
+  if (hash === PASSWORD_HASH) {
+    sessionStorage.setItem('atl_admin', hash);
+    unlock();
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+function unlock() {
+  document.getElementById('gate').classList.add('hidden');
+  document.getElementById('admin').classList.add('visible');
+  startInactivityTimer();
+}
+
+function doLogout() {
+  sessionStorage.removeItem('atl_admin');
+  location.reload();
+}
+
+// ── SHA-256 ───────────────────────────────────────────────────
+async function sha256(str) {
+  const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── Inactivity Timer ──────────────────────────────────────────
+let inactivityEnd = 0;
+let timerInterval;
+
+function startInactivityTimer() {
+  inactivityEnd = Date.now() + TIMEOUT_MS;
+  ['click','keypress','mousemove','touchstart'].forEach(evt =>
+    document.addEventListener(evt, resetTimer, { passive: true })
+  );
+  timerInterval = setInterval(tickTimer, 1000);
+}
+
+function resetTimer() {
+  inactivityEnd = Date.now() + TIMEOUT_MS;
+}
+
+function tickTimer() {
+  const remaining = Math.max(0, inactivityEnd - Date.now());
+  const m = Math.floor(remaining / 60000);
+  const s = Math.floor((remaining % 60000) / 1000);
+  const display = document.getElementById('timerDisplay');
+  if (display) display.textContent = m + ':' + String(s).padStart(2,'0');
+  if (remaining === 0) {
+    clearInterval(timerInterval);
+    sessionStorage.removeItem('atl_admin');
+    alert('Session expired (30 min inactivity). Please log in again.');
+    location.reload();
+  }
+}
+
+// ── Tab Navigation ────────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('pane-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'"))
+        b.classList.add('active');
+    });
+  }
+}
+
+// ── Utilities ─────────────────────────────────────────────────
+function todayISO() { return new Date().toISOString().slice(0,10); }
+
+function formatDate(iso) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB',
+    { day:'numeric', month:'long', year:'numeric' });
+}
+
+function formatMonthYear(iso) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB',
+    { month:'long', year:'numeric' });
+}
+
+function slugify(s) {
+  return s.toLowerCase()
+    .replace(/&/g,'and').replace(/[^a-z0-9\s-]/g,'')
+    .trim().replace(/\s+/g,'-').replace(/-+/g,'-');
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function plainToHtml(text) {
+  if (/<[a-z][\s\S]*?>/i.test(text)) return text; // already HTML
+  return text.split(/\n\s*\n/).filter(p => p.trim())
+    .map(p => '<p>' + p.trim().replace(/\n/g,'<br>') + '</p>')
+    .join('\n');
+}
+
+function readTime(text) {
+  return Math.max(1, Math.ceil(text.replace(/<[^>]+>/g,'').trim().split(/\s+/).length / 200));
+}
+
+function copyBox(id) {
+  const el = document.getElementById(id);
+  el.select(); el.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(el.value).catch(() => document.execCommand('copy'));
+  const btn = event.currentTarget;
+  const orig = btn.textContent;
+  btn.textContent = 'Copied!';
+  btn.style.background = '#4a9a6a';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 1800);
+}
+
+function autoSlug() {
+  document.getElementById('b-slug').value = slugify(document.getElementById('b-title').value);
+}
+
+// ── Status Helpers ────────────────────────────────────────────
+function setStatus(id, type, msg) {
+  document.getElementById(id).innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
+}
+
+function setLoading(id, msg) {
+  document.getElementById(id).innerHTML =
+    '<span class="loading"><span class="spinner"></span>' + msg + '</span>';
+}
+
+// ── Section 1: Blog Post ──────────────────────────────────────
+async function generatePost() {
+  const title = document.getElementById('b-title').value.trim();
+  const slug  = document.getElementById('b-slug').value.trim() || slugify(title);
+  const cat   = document.getElementById('b-cat').value;
+  const date  = document.getElementById('b-date').value;
+  const img   = document.getElementById('b-img').value.trim();
+  const meta  = document.getElementById('b-meta').value.trim();
+  const intro = document.getElementById('b-intro').value.trim();
+  const body  = document.getElementById('b-body').value.trim();
+
+  if (!title) { alert('Please enter a post title.'); return; }
+  if (!date)  { alert('Please select a date.'); return; }
+
+  const btn = document.getElementById('b-btn');
+  btn.textContent = 'Fetching template…'; btn.disabled = true;
+
+  let tmpl;
+  try {
+    const r = await fetch(TEMPLATE_URL);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    tmpl = await r.text();
+  } catch(e) {
+    btn.textContent = 'Generate Post HTML'; btn.disabled = false;
+    alert('Could not fetch template: ' + e.message);
+    return;
+  }
+
+  const catSlug = { 'Slow Living':'slow-living', 'Food & Health':'food-health',
+    'Food &amp; Health':'food-health', 'Portugal Life':'portugal-life', 'Longevity':'longevity' }[cat] || slugify(cat);
+  const catDisplay = cat.replace('&amp;','&');
+  const monthYear  = formatMonthYear(date);
+  const allText    = (intro + ' ' + body).replace(/<[^>]+>/g,'');
+  const rt         = readTime(allText);
+  const metaDesc   = meta || (intro || body.replace(/<[^>]+>/g,'')).slice(0,160);
+
+  // Image src
+  let imgSrc = '';
+  if (img) {
+    imgSrc = img.startsWith('http') ? img : (img.startsWith('../') ? img : '../' + img);
+  }
+
+  // Body HTML
+  const introHtml = intro ? '<p>' + intro + '</p>' : '';
+  const bodyHtml  = body  ? plainToHtml(body) : '';
+  const fullBody  = [introHtml, bodyHtml].filter(Boolean).join('\n\n            ');
+
+  // Template replacements
+  let html = tmpl;
+  html = html.replace(/\[POST TITLE\]/g, title);
+  html = html.replace(/\[META DESCRIPTION[^\]]*\]/g, metaDesc);
+  html = html.replace(/\[CATEGORY DISPLAY NAME\]/g, catDisplay);
+  html = html.replace(/data-category="[^"]*"/g, 'data-category="' + catSlug + '"');
+  html = html.replace('[Month Year]', monthYear);
+  html = html.replace('[X min read]', rt + ' min read');
+  html = html.replace('[IMAGE ALT TEXT]', esc(title));
+
+  if (imgSrc) {
+    html = html.replace(/src="\.\.\/content\/images\/\[IMAGE-FILENAME\]\.jpeg"/, 'src="' + imgSrc + '"');
+  } else {
+    html = html.replace('[IMAGE-FILENAME]', slug);
+  }
+
+  // Replace body placeholder block
+  html = html.replace(
+    /<!-- Opening paragraph[^>]*-->\s*<p>\[Opening paragraph[^\]]*\]<\/p>[\s\S]*?(?=<!-- Navigation:)/,
+    fullBody + '\n\n            '
+  );
+
+  document.getElementById('b-out-slug').textContent = slug;
+  document.getElementById('b-html').value = html;
+  document.getElementById('b-git').textContent =
+    '# Save as:  posts/' + slug + '.html\n\ngit add posts/' + slug + '.html\ngit commit -m "Add post: ' + title + '"\ngit push origin main';
+  document.getElementById('b-card').value = buildPostCard(slug, title, catDisplay, catSlug, monthYear, rt, imgSrc);
+
+  document.getElementById('b-out').style.display = '';
+  btn.textContent = 'Generate Post HTML'; btn.disabled = false;
+  document.getElementById('b-out').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function buildPostCard(slug, title, catDisplay, catSlug, monthYear, rt, imgSrc) {
+  const src = imgSrc.startsWith('../') ? imgSrc.slice(3) : imgSrc;
+  return `<!-- Post Card: ${title} -->
+<article class="post-card" data-category="${catSlug}">
+  <a href="posts/${slug}.html" class="post-card__image-link">
+    <img src="${src}" alt="${esc(title)}" loading="lazy">
+  </a>
+  <div class="post-card__body">
+    <span class="post-card__category">${catDisplay}</span>
+    <h2 class="post-card__title"><a href="posts/${slug}.html">${esc(title)}</a></h2>
+    <div class="post-card__meta">
+      <span>${monthYear}</span>
+      <span>${rt} min read</span>
+    </div>
+  </div>
+</article>`;
+}
+
+// ── Section 2: Health Note ────────────────────────────────────
+function generateHealthNote() {
+  const date    = document.getElementById('h-date').value;
+  const source  = document.getElementById('h-source').value.trim();
+  const tags    = document.getElementById('h-tags').value.trim();
+  const title   = document.getElementById('h-title').value.trim();
+  const content = document.getElementById('h-content').value.trim();
+
+  if (!title)   { alert('Please enter a title.'); return; }
+  if (!content) { alert('Please enter content.'); return; }
+
+  const fmtDate = date ? formatDate(date) : '';
+  const contentHtml = plainToHtml(content);
+
+  let html = '<!-- Health Note: ' + esc(title) + ' -->\n';
+  html += '<div class="health-note-card">\n';
+  if (source) html += '  <div class="health-note-card__source-badge">' + esc(source) + '</div>\n';
+  if (tags)   html += '  <span class="health-note-card__tag">' + esc(tags) + '</span>\n';
+  html += '  <h2 class="health-note-card__title">' + esc(title) + '</h2>\n';
+  if (fmtDate) html += '  <p style="font-size:0.78rem;color:#8a7a6a;margin-bottom:1rem">' + fmtDate + '</p>\n';
+  html += '  <div class="health-note-card__section">\n    ' + contentHtml + '\n  </div>\n</div>';
+
+  document.getElementById('h-html').value = html;
+  document.getElementById('h-out').style.display = '';
+  document.getElementById('h-out').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ── Section 3: YouTube Video ──────────────────────────────────
+function extractVid(input) {
+  input = (input || '').trim();
+  let m;
+  m = input.match(/[?&]v=([a-zA-Z0-9_-]{11})/);   if (m) return m[1];
+  m = input.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/); if (m) return m[1];
+  m = input.match(/embed\/([a-zA-Z0-9_-]{11})/);    if (m) return m[1];
+  m = input.match(/shorts\/([a-zA-Z0-9_-]{11})/);   if (m) return m[1];
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+  return null;
+}
+
+function previewVid() {
+  const id   = extractVid(document.getElementById('v-url').value);
+  const hint = document.getElementById('v-id-hint');
+  if (id) { hint.textContent = 'Video ID: ' + id; hint.style.color = '#4a9a6a'; }
+  else if (document.getElementById('v-url').value.length > 4)
+    { hint.textContent = 'Cannot extract ID'; hint.style.color = '#b94a4a'; }
+  else hint.textContent = '';
+}
+
+function generateVideo() {
+  const url   = document.getElementById('v-url').value;
+  const title = document.getElementById('v-title').value.trim();
+  const page  = document.getElementById('v-page').value;
+  const id    = extractVid(url);
+
+  if (!id)    { alert('Cannot extract a YouTube video ID from that input.'); return; }
+  if (!title) { alert('Please enter a video title.'); return; }
+
+  const html = `<div class="video-card">
+  <div class="video-card__embed">
+    <iframe src="https://www.youtube.com/embed/${id}"
+      title="${esc(title)}"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen loading="lazy"></iframe>
+  </div>
+  <div class="video-card__body">
+    <h3 class="video-card__title">${esc(title)}</h3>
+    <span class="video-card__date">@aterraliberty &nbsp;&middot;&nbsp; Central Portugal</span>
+  </div>
+</div>`;
+
+  document.getElementById('v-html').value = html;
+  document.getElementById('v-note').innerHTML = page === 'journal'
+    ? 'Paste inside <code>.video-grid</code> in <strong>journal.html</strong> — replacing a placeholder block, or adding before the first one.'
+    : 'Paste into the video/featured section in <strong>index.html</strong>.';
+  document.getElementById('v-out').style.display = '';
+  document.getElementById('v-out').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ── Section 4: Subscribers ────────────────────────────────────
+let cachedSubs = [];
+
+async function loadSubscribers() {
+  const btn = document.getElementById('sub-btn');
+  btn.disabled = true; btn.textContent = 'Loading…';
+  setLoading('sub-status', 'Fetching from worker…');
+  document.getElementById('sub-meta').style.display = 'none';
+  document.getElementById('sub-table-wrap').style.display = 'none';
+  document.getElementById('sub-csv-btn').style.display = 'none';
+
+  try {
+    const res = await fetch(FORM_WORKER + '/subscribers/list', {
+      headers: { 'x-admin-key': ADMIN_KEY }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + res.statusText);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Worker returned ok:false');
+
+    cachedSubs = data.subscribers || [];
+
+    document.getElementById('sub-total').textContent  = data.count || cachedSubs.length;
+    document.getElementById('sub-loaded').textContent = cachedSubs.length;
+    document.getElementById('sub-meta').style.display = '';
+
+    const tbody = document.getElementById('sub-body');
+    tbody.innerHTML = '';
+    if (!cachedSubs.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#a89880;text-align:center;padding:2rem">No subscribers yet</td></tr>';
+    } else {
+      cachedSubs.forEach((s, i) => {
+        const interests = Array.isArray(s.interests) && s.interests.length
+          ? s.interests.map(t => '<span class="tag">' + esc(t) + '</span>').join('')
+          : '<span style="color:#a89880">—</span>';
+        tbody.innerHTML +=
+          '<tr><td style="color:#a89880">' + (i+1) + '</td>' +
+          '<td><strong>' + esc(s.email||'') + '</strong></td>' +
+          '<td>' + esc(s.source||'website') + '</td>' +
+          '<td>' + interests + '</td>' +
+          '<td>' + esc(s.date||'') + '</td></tr>';
+      });
+    }
+
+    document.getElementById('sub-table-wrap').style.display = '';
+    if (cachedSubs.length) document.getElementById('sub-csv-btn').style.display = '';
+    setStatus('sub-status', 'ok', 'Loaded ' + cachedSubs.length + ' subscriber' + (cachedSubs.length !== 1 ? 's' : ''));
+  } catch(e) {
+    setStatus('sub-status', 'err', '<strong>Error:</strong> ' + esc(e.message));
+  }
+
+  btn.disabled = false; btn.textContent = 'Reload';
+}
+
+function exportCSV() {
+  const rows = ['"Email","Source","Interests","Date"'].concat(
+    cachedSubs.map(s => [
+      '"' + (s.email||'').replace(/"/g,'""') + '"',
+      '"' + (s.source||'website').replace(/"/g,'""') + '"',
+      '"' + (Array.isArray(s.interests) ? s.interests.join(', ') : '').replace(/"/g,'""') + '"',
+      '"' + (s.date||'').replace(/"/g,'""') + '"',
+    ].join(','))
+  );
+  const blob = new Blob([rows.join('\n')], { type:'text/csv' });
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob),
+    download: 'atl-subscribers-' + todayISO() + '.csv'
+  });
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+// ── Section 5: Analytics ──────────────────────────────────────
+async function loadAnalytics() {
+  const today = todayISO();
+  setLoading('ana-status', 'Fetching stats…');
+  document.getElementById('ana-out').style.display = 'none';
+
+  try {
+    const res = await fetch(ANA_WORKER + '/stats?date=' + today);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+
+    // Build display
+    let out = '<div class="stats-grid">';
+    out += statCard(d.visitors,        'Visitors');
+    out += statCard(d.youtubeClicks,   'YouTube Clicks');
+    out += statCard(d.newSubscribers,  'New Subscribers');
+    out += statCard(d.subscribeClicks, 'Subscribe Clicks');
+    out += statCard(d.contactSent,     'Messages Sent');
+    const avgMin = d.totalSeconds ? Math.round(d.totalSeconds / Math.max(d.visitors,1) / 60) : 0;
+    out += statCard(avgMin + 'm', 'Avg Time on Site');
+    out += '</div>';
+
+    // Top posts
+    const posts = Object.entries(d.postClicks || {}).sort((a,b) => b[1]-a[1]);
+    if (posts.length) {
+      out += '<p style="font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin-bottom:0.5rem">Top Posts</p>';
+      out += '<div class="table-wrap"><table><thead><tr><th>#</th><th>Slug</th><th>Clicks</th></tr></thead><tbody>';
+      posts.slice(0,10).forEach(([slug, n], i) => {
+        out += '<tr><td style="color:#a89880">' + (i+1) + '</td><td>' + esc(slug) + '</td><td><strong>' + n + '</strong></td></tr>';
+      });
+      out += '</tbody></table></div><br>';
+    }
+
+    // Page views
+    const pages = Object.entries(d.pageViews || {}).sort((a,b) => b[1]-a[1]);
+    if (pages.length) {
+      out += '<p style="font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin-bottom:0.5rem">Page Views</p>';
+      out += '<div class="table-wrap"><table><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody>';
+      pages.forEach(([p, n]) => {
+        out += '<tr><td>' + esc(p) + '</td><td><strong>' + n + '</strong></td></tr>';
+      });
+      out += '</tbody></table></div><br>';
+    }
+
+    // Sources / Countries
+    const src = Object.entries(d.sources || {}).sort((a,b)=>b[1]-a[1]);
+    const ctr = Object.entries(d.countries || {}).sort((a,b)=>b[1]-a[1]);
+    if (src.length || ctr.length) {
+      out += '<div class="row2">';
+      if (src.length) {
+        out += '<div><p style="font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin-bottom:0.5rem">Sources</p><div class="table-wrap"><table><thead><tr><th>Source</th><th>n</th></tr></thead><tbody>';
+        src.forEach(([k,v]) => out += '<tr><td>' + esc(k) + '</td><td>' + v + '</td></tr>');
+        out += '</tbody></table></div></div>';
+      }
+      if (ctr.length) {
+        out += '<div><p style="font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin-bottom:0.5rem">Countries</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>n</th></tr></thead><tbody>';
+        ctr.slice(0,10).forEach(([k,v]) => out += '<tr><td>' + esc(k) + '</td><td>' + v + '</td></tr>');
+        out += '</tbody></table></div></div>';
+      }
+      out += '</div>';
+    }
+
+    document.getElementById('ana-out').innerHTML = out;
+    document.getElementById('ana-out').style.display = '';
+    setStatus('ana-status', 'ok', 'Stats loaded for ' + formatDate(today));
+  } catch(e) {
+    setStatus('ana-status', 'err', '<strong>Error:</strong> ' + esc(e.message));
+  }
+}
+
+function statCard(val, label) {
+  const v = (val === null || val === undefined) ? '—' : val;
+  return '<div class="stat-card"><span class="stat-num">' + v + '</span><span class="stat-label">' + label + '</span></div>';
+}
+
+// ── Section 6: Newsletter ─────────────────────────────────────
+
+// Rich text toolbar
+function fmt(cmd) {
+  document.getElementById('nl-editor').focus();
+  document.execCommand(cmd, false, null);
+}
+
+function fmtH2() {
+  document.getElementById('nl-editor').focus();
+  document.execCommand('formatBlock', false, 'h2');
+}
+
+function fmtLink() {
+  const url = prompt('Enter URL:');
+  if (url) {
+    document.getElementById('nl-editor').focus();
+    document.execCommand('createLink', false, url);
+  }
+}
+
+function fmtQuote() {
+  document.getElementById('nl-editor').focus();
+  document.execCommand('formatBlock', false, 'blockquote');
+}
+
+function fmtClear() {
+  document.getElementById('nl-editor').focus();
+  document.execCommand('removeFormat', false, null);
+  document.execCommand('formatBlock', false, 'p');
+}
+
+let sourceMode = false;
+function toggleSource() {
+  const editor = document.getElementById('nl-editor');
+  const source = document.getElementById('nl-source');
+  const toolbar = document.getElementById('nl-toolbar');
+  if (!sourceMode) {
+    source.value = editor.innerHTML;
+    editor.style.display = 'none';
+    source.style.display = '';
+    sourceMode = true;
+    // Disable toolbar buttons
+    toolbar.querySelectorAll('.toolbar-btn:not(:last-child)').forEach(b => b.disabled = true);
+  } else {
+    editor.innerHTML = source.value;
+    source.style.display = 'none';
+    editor.style.display = '';
+    sourceMode = false;
+    toolbar.querySelectorAll('.toolbar-btn').forEach(b => b.disabled = false);
+  }
+}
+
+function getBody() {
+  if (sourceMode) return document.getElementById('nl-source').value;
+  return document.getElementById('nl-editor').innerHTML;
+}
+
+function getInterests() {
+  return ['journal','health','portugal','shop']
+    .filter(k => document.getElementById('nl-i-' + k).checked);
+}
+
+function previewNewsletter() {
+  const subject = document.getElementById('nl-subject').value.trim();
+  const body    = getBody();
+  if (!body.replace(/<[^>]+>/g,'').trim()) { alert('Body is empty.'); return; }
+  document.getElementById('preview-subject').textContent = subject || '(no subject)';
+  document.getElementById('preview-body').innerHTML = body;
+  document.getElementById('preview-modal').classList.add('open');
+}
+
+function closePreviewModal(e) {
+  if (!e || e.target === document.getElementById('preview-modal') || e.type === 'click' && !e.target.closest('.modal'))
+    document.getElementById('preview-modal').classList.remove('open');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('preview-modal').classList.remove('open');
+});
+
+async function sendTest() {
+  const subject = document.getElementById('nl-subject').value.trim();
+  const preview = document.getElementById('nl-preview').value.trim();
+  const body    = getBody();
+  if (!subject) { alert('Please enter a subject.'); return; }
+  if (!body.replace(/<[^>]+>/g,'').trim()) { alert('Body is empty.'); return; }
+
+  const btn = document.getElementById('nl-test-btn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  document.getElementById('nl-status').innerHTML = '';
+
+  try {
+    const res = await fetch(FORM_WORKER + '/send-newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        adminKey: ADMIN_KEY,
+        subject,
+        previewText: preview,
+        body,
+        testMode: true,
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      setStatus('nl-status', 'ok', 'Test email sent to coddinging@gmail.com');
+    } else {
+      setStatus('nl-status', 'err', '<strong>Error:</strong> ' + esc(data.error || 'Unknown error'));
+    }
+  } catch(e) {
+    setStatus('nl-status', 'err', '<strong>Error:</strong> ' + esc(e.message));
+  }
+
+  btn.disabled = false; btn.textContent = 'Send TEST to coddinging@gmail.com';
+}
+
+function openConfirm() {
+  const subject = document.getElementById('nl-subject').value.trim();
+  const body    = getBody();
+  if (!subject) { alert('Please enter a subject.'); return; }
+  if (!body.replace(/<[^>]+>/g,'').trim()) { alert('Body is empty.'); return; }
+  document.getElementById('confirm-box').classList.add('open');
+  document.getElementById('confirm-input').value = '';
+  document.getElementById('confirm-btn').disabled = true;
+  document.getElementById('confirm-input').focus();
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-box').classList.remove('open');
+}
+
+function checkConfirm() {
+  const val = document.getElementById('confirm-input').value;
+  document.getElementById('confirm-btn').disabled = (val !== 'SEND');
+}
+
+async function sendAll() {
+  const subject   = document.getElementById('nl-subject').value.trim();
+  const preview   = document.getElementById('nl-preview').value.trim();
+  const body      = getBody();
+  const interests = getInterests();
+
+  document.getElementById('confirm-btn').disabled = true;
+  document.getElementById('confirm-btn').textContent = 'Sending…';
+  document.getElementById('nl-status').innerHTML = '';
+
+  try {
+    const payload = { adminKey: ADMIN_KEY, subject, previewText: preview, body };
+    if (interests.length) payload.interests = interests;
+
+    const res = await fetch(FORM_WORKER + '/send-newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    closeConfirm();
+    if (data.ok) {
+      setStatus('nl-status', 'ok',
+        'Sent to <strong>' + data.sent + '</strong> subscriber' + (data.sent !== 1 ? 's' : '') +
+        (data.failed ? ' &nbsp;· ' + data.failed + ' failed' : ''));
+    } else {
+      setStatus('nl-status', 'err', '<strong>Error:</strong> ' + esc(data.error || 'Unknown error'));
+    }
+  } catch(e) {
+    closeConfirm();
+    setStatus('nl-status', 'err', '<strong>Error:</strong> ' + esc(e.message));
+  }
+  document.getElementById('confirm-btn').textContent = 'Send Now';
+}
+</script>
+</body>
+</html>
