@@ -232,7 +232,7 @@ p:last-child { margin-bottom: 0; }
 .hero__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(44, 32, 16, 0.72) 40%, rgba(44, 32, 16, 0.2) 100%);
+  background: linear-gradient(to right, rgba(44, 32, 16, 0.28) 40%, rgba(44, 32, 16, 0.2) 100%);
   z-index: 1;
 }
 
