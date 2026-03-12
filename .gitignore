@@ -1,4 +1,3 @@
-*.py
 activity_log.txt
 pending_task.txt
 __pycache__/
@@ -6,3 +5,4 @@ __pycache__/
 .claude/
 .wrangler/
 node_modules/
+.env
