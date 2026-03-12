@@ -5,414 +5,369 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — A Terra Liberty</title>
   <style>
-    /* ── Reset ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; }
-
     body {
       font-family: Georgia, 'Times New Roman', serif;
-      background: #f5f0eb;
-      color: #2c2416;
-      min-height: 100vh;
-      line-height: 1.6;
+      background: #f5f0eb; color: #2c2416; min-height: 100vh;
     }
 
-    a { color: #c17d4a; }
-
-    /* ── Password Gate ─────────────────────────────────────── */
+    /* ── Gate ──────────────────────────────────────────────── */
     #gate {
-      position: fixed; inset: 0;
-      background: #f5f0eb;
+      position: fixed; inset: 0; background: #f5f0eb;
       display: flex; align-items: center; justify-content: center;
-      z-index: 9999;
-      padding: 1rem;
+      z-index: 9999; padding: 1rem;
     }
     #gate.hidden { display: none; }
-
     .gate-card {
-      background: #fff;
-      border: 1px solid #d9cfc4;
-      padding: 2.5rem 2rem;
-      width: 100%; max-width: 360px;
-      text-align: center;
+      background: #fff; border: 1px solid #d9cfc4;
+      padding: 2.5rem 2rem; width: 100%; max-width: 340px; text-align: center;
     }
-    .gate-card h1 { font-size: 1.5rem; margin-bottom: 0.2rem; }
-    .gate-tagline {
-      font-size: 0.72rem; letter-spacing: 0.15em;
-      text-transform: uppercase; color: #8a7a6a; margin-bottom: 2rem;
+    .gate-card h1 { font-size: 1.45rem; margin-bottom: 0.2rem; }
+    .gate-sub {
+      font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #8a7a6a; margin-bottom: 1.8rem;
     }
     .gate-card input[type="password"] {
-      width: 100%; padding: 0.7rem 1rem;
-      border: 1px solid #d9cfc4;
+      width: 100%; padding: 0.65rem 0.9rem; border: 1px solid #d9cfc4;
       font-family: Georgia, serif; font-size: 1rem;
       background: #faf8f5; color: #2c2416;
-      margin-bottom: 0.75rem; outline: none;
+      margin-bottom: 0.7rem; outline: none;
     }
     .gate-card input:focus { border-color: #c17d4a; }
-    .gate-error {
-      font-size: 0.82rem; color: #b94a4a; margin-top: 0.5rem;
-      display: none;
-    }
+    .gate-err { font-size: 0.8rem; color: #b94a4a; margin-top: 0.5rem; display: none; }
 
     /* ── Admin Shell ───────────────────────────────────────── */
     #admin { display: none; }
-    #admin.visible { display: block; }
+    #admin.on { display: block; }
 
-    .admin-header {
+    .hdr {
       background: #2c2416; color: #f5efe6;
-      padding: 0.85rem 1.5rem;
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 1rem;
+      padding: 0.8rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .admin-header h1 { font-size: 1rem; letter-spacing: 0.04em; }
-    .admin-header-right {
-      display: flex; align-items: center; gap: 1rem; flex-shrink: 0;
-    }
-    .session-timer {
-      font-size: 0.72rem; color: #a89880; font-family: monospace;
-    }
+    .hdr h1 { font-size: 0.95rem; letter-spacing: 0.04em; }
+    .hdr-right { display: flex; align-items: center; gap: 0.85rem; }
+    .timer { font-size: 0.7rem; color: #a89880; font-family: monospace; }
     .btn-logout {
-      background: none; border: 1px solid #a89880; color: #a89880;
-      padding: 0.3rem 0.75rem; cursor: pointer;
-      font-family: Georgia, serif; font-size: 0.75rem;
+      background: none; border: 1px solid #6b5c47; color: #a89880;
+      padding: 0.25rem 0.65rem; cursor: pointer;
+      font-family: Georgia, serif; font-size: 0.72rem;
     }
     .btn-logout:hover { border-color: #f5efe6; color: #f5efe6; }
 
-    /* ── Tab Nav ───────────────────────────────────────────── */
-    .tab-nav {
+    /* ── GitHub Settings Bar ───────────────────────────────── */
+    .gh-bar {
       background: #ede7df; border-bottom: 1px solid #d9cfc4;
+      padding: 0.55rem 1.25rem;
+    }
+    .gh-inner {
+      display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;
+      max-width: 860px; margin: 0 auto;
+    }
+    .gh-label {
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #6b5c47; flex-shrink: 0;
+    }
+    .gh-input {
+      padding: 0.3rem 0.65rem; border: 1px solid #c9bfb4;
+      font-family: monospace; font-size: 0.78rem;
+      background: #fff; color: #2c2416; outline: none;
+      width: 240px; flex-shrink: 0;
+    }
+    .gh-input:focus { border-color: #c17d4a; }
+    .gh-status {
+      font-size: 0.74rem; font-weight: bold;
+    }
+    .gh-status.ok  { color: #4a9a6a; }
+    .gh-status.err { color: #b94a4a; }
+    .gh-link {
+      font-size: 0.72rem; color: #6b5c47; text-decoration: none;
+      border-bottom: 1px solid #c9bfb4; white-space: nowrap;
+    }
+    .gh-link:hover { color: #2c2416; border-color: #2c2416; }
+    .gh-hint { font-size: 0.68rem; color: #a89880; }
+
+    /* ── Tabs ──────────────────────────────────────────────── */
+    .tabs {
+      background: #e8e2da; border-bottom: 1px solid #d0c9c0;
       display: flex; overflow-x: auto; scrollbar-width: none;
     }
-    .tab-nav::-webkit-scrollbar { display: none; }
-    .tab-btn {
-      flex-shrink: 0;
-      padding: 0.8rem 1.2rem;
-      background: none; border: none;
-      border-bottom: 2px solid transparent;
-      font-family: Georgia, serif; font-size: 0.8rem;
-      color: #6b5c47; cursor: pointer; white-space: nowrap;
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0; padding: 0.75rem 1.1rem;
+      background: none; border: none; border-bottom: 2px solid transparent;
+      font-family: Georgia, serif; font-size: 0.78rem; color: #6b5c47;
+      cursor: pointer; white-space: nowrap; transition: color 0.1s;
     }
-    .tab-btn:hover { color: #2c2416; }
-    .tab-btn.active { color: #2c2416; border-bottom-color: #c17d4a; font-weight: bold; }
+    .tab:hover { color: #2c2416; }
+    .tab.on { color: #2c2416; border-bottom-color: #c17d4a; font-weight: bold; }
 
-    /* ── Content ───────────────────────────────────────────── */
-    .admin-body { max-width: 860px; margin: 0 auto; padding: 1.8rem 1rem 4rem; }
-
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
-
-    .section-title {
-      font-size: 1.15rem; margin-bottom: 0.25rem;
-      padding-bottom: 0.5rem; border-bottom: 1px solid #d9cfc4;
+    /* ── Page Body ─────────────────────────────────────────── */
+    .body { max-width: 860px; margin: 0 auto; padding: 1.6rem 1rem 4rem; }
+    .pane { display: none; }
+    .pane.on { display: block; }
+    .pane-title {
+      font-size: 1.1rem; padding-bottom: 0.5rem;
+      border-bottom: 1px solid #d9cfc4; margin-bottom: 0.3rem;
     }
-    .section-desc {
-      font-size: 0.8rem; color: #8a7a6a; margin: 0.4rem 0 1.6rem;
-    }
+    .pane-desc { font-size: 0.79rem; color: #8a7a6a; margin-bottom: 1.5rem; }
 
-    /* ── Form Elements ─────────────────────────────────────── */
-    .field { margin-bottom: 1.1rem; }
-    .field label {
-      display: block; font-size: 0.74rem;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: #6b5c47; margin-bottom: 0.3rem;
+    /* ── Form ──────────────────────────────────────────────── */
+    .f { margin-bottom: 1rem; }
+    .f label {
+      display: block; font-size: 0.72rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #6b5c47; margin-bottom: 0.28rem;
     }
-    .field input[type="text"],
-    .field input[type="date"],
-    .field input[type="url"],
-    .field input[type="email"],
-    .field select,
-    .field textarea {
-      width: 100%; padding: 0.6rem 0.85rem;
+    .f input[type="text"], .f input[type="date"], .f input[type="url"],
+    .f input[type="email"], .f select, .f textarea {
+      width: 100%; padding: 0.58rem 0.82rem;
       border: 1px solid #d9cfc4;
-      font-family: Georgia, serif; font-size: 0.9rem;
+      font-family: Georgia, serif; font-size: 0.88rem;
       background: #fff; color: #2c2416;
       outline: none; appearance: none;
     }
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus { border-color: #c17d4a; }
-    .field textarea { resize: vertical; }
-    .hint {
-      font-size: 0.74rem; color: #a89880; margin-top: 0.25rem;
-    }
-    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-    @media (max-width: 600px) {
-      .row2, .row3 { grid-template-columns: 1fr; }
-    }
+    .f input:focus, .f select:focus, .f textarea:focus { border-color: #c17d4a; }
+    .f textarea { resize: vertical; line-height: 1.65; }
+    .hint { font-size: 0.72rem; color: #a89880; margin-top: 0.22rem; }
+    .meta-count { font-size: 0.7rem; color: #a89880; margin-top: 0.2rem; }
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+    .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.9rem; }
+    @media (max-width: 580px) { .g2,.g3 { grid-template-columns: 1fr; } }
 
     /* ── Buttons ───────────────────────────────────────────── */
     .btn {
-      display: inline-block;
-      padding: 0.65rem 1.5rem;
-      background: #c17d4a; color: #fff;
-      border: none; cursor: pointer;
-      font-family: Georgia, serif; font-size: 0.9rem;
+      display: inline-block; padding: 0.6rem 1.4rem;
+      background: #c17d4a; color: #fff; border: none; cursor: pointer;
+      font-family: Georgia, serif; font-size: 0.88rem;
       letter-spacing: 0.02em; transition: background 0.15s;
     }
     .btn:hover { background: #a8673c; }
     .btn:disabled { background: #c9b8a8; cursor: not-allowed; }
-    .btn-outline {
-      background: #fff; color: #2c2416;
-      border: 1px solid #2c2416;
+    .btn-out {
+      background: #fff; color: #2c2416; border: 1px solid #2c2416;
     }
-    .btn-outline:hover { background: #f5f0eb; }
-    .btn-danger {
-      background: #b94a4a;
-    }
-    .btn-danger:hover { background: #963a3a; }
-    .btn-sm { padding: 0.38rem 0.9rem; font-size: 0.78rem; }
-    .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+    .btn-out:hover { background: #f5f0eb; }
+    .btn-red { background: #b94a4a; }
+    .btn-red:hover { background: #963a3a; }
+    .btn-green { background: #3a8a5a; }
+    .btn-green:hover { background: #2a6a44; }
+    .btn-sm { padding: 0.33rem 0.8rem; font-size: 0.76rem; }
+    .brow { display: flex; gap: 0.65rem; flex-wrap: wrap; margin-top: 1rem; }
 
-    /* ── Output Boxes ──────────────────────────────────────── */
-    .output-box {
-      margin-top: 1.5rem;
-      border: 1px solid #d9cfc4; background: #fff;
-    }
-    .output-header {
-      background: #ede7df; padding: 0.55rem 0.9rem;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid #d9cfc4;
-    }
-    .output-label {
-      font-size: 0.72rem; letter-spacing: 0.08em;
-      text-transform: uppercase; color: #6b5c47;
-    }
-    .output-box pre,
-    .output-box textarea.copyable {
-      padding: 0.9rem;
-      font-family: 'Courier New', monospace; font-size: 0.75rem;
-      line-height: 1.55; color: #2c2416; background: #faf8f5;
-      white-space: pre-wrap; word-break: break-word;
-      max-height: 380px; overflow-y: auto;
-      width: 100%; border: none; outline: none; resize: vertical;
-    }
-    .output-note {
-      padding: 0.65rem 0.9rem;
-      font-size: 0.78rem; color: #6b5c47;
-      border-top: 1px solid #eee; background: #f9f6f2;
-    }
-    .git-block {
-      background: #1e1710; padding: 1rem;
-    }
-    .git-block .git-label {
-      font-size: 0.68rem; letter-spacing: 0.1em;
-      text-transform: uppercase; color: #a89880;
-      font-family: Georgia, serif; margin-bottom: 0.4rem;
-    }
-    .git-block code {
-      display: block; font-family: 'Courier New', monospace;
-      font-size: 0.8rem; color: #a8d5a2; line-height: 2;
-    }
+    /* ── Status / Alerts ───────────────────────────────────── */
+    .status { margin-top: 1.1rem; font-size: 0.84rem; }
+    .s-ok   { background: #edf7f2; border-left: 3px solid #4a9a6a; padding: 0.7rem 1rem; color: #1a5a35; }
+    .s-err  { background: #fdf0f0; border-left: 3px solid #b94a4a; padding: 0.7rem 1rem; color: #7a1a1a; }
+    .s-info { background: #f0f4fd; border-left: 3px solid #4a6a9a; padding: 0.7rem 1rem; color: #1a355a; }
+    .s-warn { background: #fef9f0; border-left: 3px solid #c17d4a; padding: 0.7rem 1rem; color: #7a4e1a; }
 
-    /* ── Alerts ────────────────────────────────────────────── */
-    .alert {
-      padding: 0.75rem 1rem; font-size: 0.82rem;
-      border-left: 3px solid; margin-bottom: 0.75rem;
-    }
-    .alert-ok  { background: #f0fdf4; border-color: #4a9a6a; color: #1a5a35; }
-    .alert-err { background: #fdf0f0; border-color: #b94a4a; color: #7a1a1a; }
-    .alert-info{ background: #f0f4fd; border-color: #4a6a9a; color: #1a355a; }
-    .alert-warn{ background: #fef9f0; border-color: #c17d4a; color: #7a4e1a; }
-
-    /* ── Spinner ───────────────────────────────────────────── */
     .spinner {
-      display: inline-block; width: 14px; height: 14px;
+      display: inline-block; width: 13px; height: 13px;
       border: 2px solid #d9cfc4; border-top-color: #c17d4a;
       border-radius: 50%; animation: spin 0.7s linear infinite;
       vertical-align: middle; margin-right: 0.4rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading { color: #8a7a6a; font-size: 0.84rem; }
 
-    /* ── Table ─────────────────────────────────────────────── */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    /* ── Subscribers Table ─────────────────────────────────── */
+    .tw { overflow-x: auto; margin-top: 0.75rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     th {
-      text-align: left; padding: 0.55rem 0.75rem;
+      text-align: left; padding: 0.5rem 0.7rem;
       background: #ede7df; border-bottom: 2px solid #d9cfc4;
-      font-size: 0.7rem; letter-spacing: 0.08em;
+      font-size: 0.68rem; letter-spacing: 0.08em;
       text-transform: uppercase; color: #6b5c47; font-weight: normal;
     }
-    td {
-      padding: 0.55rem 0.75rem;
-      border-bottom: 1px solid #ede7df; vertical-align: top;
-    }
+    td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #ede7df; vertical-align: top; }
     tr:hover td { background: #faf8f5; }
     .tag {
       display: inline-block; background: #ede7df; color: #6b5c47;
-      font-size: 0.66rem; padding: 0.12rem 0.4rem; margin: 0.1rem;
-      letter-spacing: 0.04em;
+      font-size: 0.64rem; padding: 0.1rem 0.38rem; margin: 0.08rem;
     }
 
-    /* ── Stats Cards ───────────────────────────────────────── */
-    .stats-grid {
+    /* ── Stats ─────────────────────────────────────────────── */
+    .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 0.75rem; margin-bottom: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.7rem; margin-bottom: 1.4rem;
     }
-    .stat-card {
+    .sc {
       background: #fff; border: 1px solid #d9cfc4;
-      padding: 1.1rem 0.9rem; text-align: center;
+      padding: 1rem 0.8rem; text-align: center;
     }
-    .stat-num  { font-size: 1.8rem; color: #c17d4a; display: block; line-height: 1; }
-    .stat-label{ font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #8a7a6a; margin-top: 0.25rem; }
+    .sc b { font-size: 1.75rem; color: #c17d4a; display: block; line-height: 1; }
+    .sc span { font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase; color: #8a7a6a; }
 
     /* ── Newsletter Editor ─────────────────────────────────── */
-    .editor-toolbar {
-      display: flex; gap: 0.3rem; flex-wrap: wrap;
-      padding: 0.4rem 0.5rem;
+    .toolbar {
+      display: flex; gap: 0.28rem; flex-wrap: wrap;
+      padding: 0.38rem 0.45rem;
       background: #ede7df; border: 1px solid #d9cfc4; border-bottom: none;
     }
-    .toolbar-btn {
-      padding: 0.25rem 0.6rem; background: #fff;
+    .tb {
+      padding: 0.22rem 0.55rem; background: #fff;
       border: 1px solid #d9cfc4; cursor: pointer;
-      font-size: 0.8rem; color: #2c2416;
-      font-family: Georgia, serif;
+      font-size: 0.78rem; color: #2c2416; font-family: Georgia, serif;
     }
-    .toolbar-btn:hover { background: #f5f0eb; border-color: #c17d4a; }
-    .toolbar-btn b { font-weight: bold; }
-    .toolbar-btn i { font-style: italic; }
-    .editor-area {
-      min-height: 220px; padding: 0.85rem;
+    .tb:hover { background: #f5f0eb; border-color: #c17d4a; }
+    .editor {
+      min-height: 200px; padding: 0.8rem;
       border: 1px solid #d9cfc4; background: #fff;
-      font-family: Georgia, serif; font-size: 0.92rem;
+      font-family: Georgia, serif; font-size: 0.9rem;
       line-height: 1.7; outline: none; color: #2c2416;
     }
-    .editor-area:focus { border-color: #c17d4a; }
-    .editor-area h2 { font-size: 1.1rem; margin: 1rem 0 0.4rem; }
-    .editor-area p { margin-bottom: 0.75rem; }
+    .editor:focus { border-color: #c17d4a; }
+    .editor:empty:before {
+      content: attr(data-placeholder);
+      color: #b0a090;
+    }
+    .editor h2 { font-size: 1.05rem; margin: 0.9rem 0 0.35rem; }
+    .editor p  { margin-bottom: 0.65rem; }
+    .editor blockquote {
+      border-left: 3px solid #c17d4a; margin: 0.9rem 0;
+      padding: 0.4rem 0.9rem; color: #6b5c47; font-style: italic;
+    }
+    .interests {
+      display: flex; gap: 1.1rem; flex-wrap: wrap; margin-top: 0.4rem;
+    }
+    .ck { display: flex; align-items: center; gap: 0.3rem; font-size: 0.83rem; cursor: pointer; }
+    .ck input { cursor: pointer; }
 
-    .interests-row {
-      display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.4rem;
+    /* ── Confirm box ───────────────────────────────────────── */
+    .confirm-box {
+      display: none; margin-top: 1rem;
+      background: #fdf0f0; border: 1px solid #b94a4a; padding: 1rem;
     }
-    .interest-check {
-      display: flex; align-items: center; gap: 0.35rem;
-      font-size: 0.84rem; cursor: pointer;
+    .confirm-box.on { display: block; }
+    .confirm-box p { font-size: 0.83rem; color: #7a1a1a; margin-bottom: 0.7rem; }
+    .confirm-box input {
+      padding: 0.42rem 0.65rem; border: 1px solid #b94a4a;
+      font-family: monospace; font-size: 0.9rem;
+      color: #7a1a1a; background: #fff; width: 120px; outline: none;
     }
-    .interest-check input { cursor: pointer; }
 
     /* ── Preview Modal ─────────────────────────────────────── */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.55);
-      display: flex; align-items: flex-start; justify-content: center;
-      z-index: 1000; padding: 1.5rem; overflow-y: auto;
-      display: none;
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 800;
+      align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; overflow-y: auto;
     }
-    .modal-overlay.open { display: flex; }
+    .overlay.on { display: flex; }
     .modal {
-      background: #fff; max-width: 640px; width: 100%;
-      border: 1px solid #d9cfc4; position: relative;
+      background: #fff; width: 100%; max-width: 620px;
+      border: 1px solid #d9cfc4;
     }
-    .modal-header {
+    .modal-hdr {
       background: #2c2416; color: #f5efe6;
-      padding: 0.75rem 1rem;
+      padding: 0.7rem 1rem;
       display: flex; justify-content: space-between; align-items: center;
     }
-    .modal-header h3 { font-size: 0.9rem; }
+    .modal-hdr h3 { font-size: 0.88rem; }
     .modal-close {
       background: none; border: none; color: #a89880;
       cursor: pointer; font-size: 1.2rem; line-height: 1;
     }
-    .modal-close:hover { color: #f5efe6; }
-    .modal-body { padding: 1.5rem; max-height: 75vh; overflow-y: auto; }
-    .email-preview {
+    .modal-close:hover { color: #fff; }
+    .modal-body { padding: 1.4rem; max-height: 72vh; overflow-y: auto; }
+    .em-preview {
       font-family: Georgia, serif; font-size: 15px;
       color: #2c2416; line-height: 1.7;
       border-top: 2px solid #c17d4a; padding-top: 1rem;
     }
-    .email-preview h2 { font-size: 1.05rem; margin: 1rem 0 0.4rem; }
-    .email-preview p { margin-bottom: 0.75rem; }
-    .email-preview blockquote {
-      border-left: 3px solid #c17d4a; margin: 1rem 0;
-      padding: 0.5rem 1rem; color: #6b5c47;
+    .em-preview h2 { font-size: 1.05rem; margin: 0.9rem 0 0.3rem; }
+    .em-preview p  { margin-bottom: 0.7rem; }
+    .em-preview blockquote {
+      border-left: 3px solid #c17d4a; margin: 0.9rem 0;
+      padding: 0.4rem 0.9rem; color: #6b5c47; font-style: italic;
     }
 
-    /* ── Confirm Send Box ──────────────────────────────────── */
-    .confirm-box {
-      background: #fdf0f0; border: 1px solid #b94a4a;
-      padding: 1rem; margin-top: 1rem; display: none;
-    }
-    .confirm-box.open { display: block; }
-    .confirm-box p { font-size: 0.85rem; margin-bottom: 0.75rem; color: #7a1a1a; }
-    .confirm-box input {
-      padding: 0.5rem 0.75rem; border: 1px solid #b94a4a;
-      font-family: monospace; font-size: 0.95rem;
-      color: #7a1a1a; background: #fff; width: 140px; outline: none;
-    }
-
-    /* ── Divider ───────────────────────────────────────────── */
-    hr.divider { border: none; border-top: 1px solid #d9cfc4; margin: 1.5rem 0; }
-
-    /* ── Subscriber top row ────────────────────────────────── */
-    .sub-meta {
-      display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
-    }
-    .sub-pill {
+    /* ── Misc ──────────────────────────────────────────────── */
+    hr.div { border: none; border-top: 1px solid #d9cfc4; margin: 1.4rem 0; }
+    .sub-pills { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+    .pill {
       background: #fff; border: 1px solid #d9cfc4;
-      padding: 0.5rem 1rem; font-size: 0.82rem; color: #6b5c47;
+      padding: 0.45rem 0.9rem; font-size: 0.8rem; color: #6b5c47;
     }
-    .sub-pill strong { color: #2c2416; font-size: 1.05rem; }
+    .pill strong { color: #2c2416; }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════════ -->
-<!--  PASSWORD GATE                                             -->
-<!-- ══════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<!--  GATE                                                  -->
+<!-- ══════════════════════════════════════════════════════ -->
 <div id="gate">
   <div class="gate-card">
     <h1>A Terra Liberty</h1>
-    <p class="gate-tagline">Admin Panel</p>
-    <input type="password" id="pwInput" placeholder="Password" autocomplete="current-password">
+    <p class="gate-sub">Admin Panel</p>
+    <input type="password" id="pw" placeholder="Password" autocomplete="current-password">
     <button class="btn" style="width:100%" onclick="doLogin()">Enter</button>
-    <p class="gate-error" id="pwError">Incorrect password. Try again.</p>
+    <p class="gate-err" id="pw-err">Incorrect password</p>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════ -->
-<!--  ADMIN PANEL                                               -->
-<!-- ══════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<!--  ADMIN                                                 -->
+<!-- ══════════════════════════════════════════════════════ -->
 <div id="admin">
-  <header class="admin-header">
-    <h1>A Terra Liberty &mdash; Admin</h1>
-    <div class="admin-header-right">
-      <span class="session-timer" id="timerDisplay">30:00</span>
+
+  <div class="hdr">
+    <h1>A Terra Liberty — Admin</h1>
+    <div class="hdr-right">
+      <span class="timer" id="timer">30:00</span>
       <button class="btn-logout" onclick="doLogout()">Log out</button>
     </div>
-  </header>
+  </div>
 
-  <nav class="tab-nav">
-    <button class="tab-btn active"  onclick="showTab('blog',this)">Blog Post</button>
-    <button class="tab-btn" onclick="showTab('health',this)">Health Note</button>
-    <button class="tab-btn" onclick="showTab('video',this)">YouTube</button>
-    <button class="tab-btn" onclick="showTab('subscribers',this)">Subscribers</button>
-    <button class="tab-btn" onclick="showTab('analytics',this)">Analytics</button>
-    <button class="tab-btn" onclick="showTab('newsletter',this)">Newsletter</button>
+  <!-- ── GitHub Settings Bar ─────────────────────────── -->
+  <div class="gh-bar">
+    <div class="gh-inner">
+      <span class="gh-label">GitHub</span>
+      <input type="password" id="gh-token" class="gh-input"
+        placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+        oninput="saveToken()" autocomplete="off">
+      <button class="btn btn-sm btn-out" onclick="testToken()" id="gh-test">Test</button>
+      <span id="gh-st" class="gh-status"></span>
+      <a href="https://github.com/settings/tokens/new?scopes=repo&description=ATL+Admin"
+        target="_blank" class="gh-link" rel="noopener">Get token ↗</a>
+      <span class="gh-hint">Needs: repo (read &amp; write)</span>
+    </div>
+  </div>
+
+  <!-- ── Tabs ────────────────────────────────────────── -->
+  <nav class="tabs">
+    <button class="tab on"  onclick="showTab('blog',this)">Blog Post</button>
+    <button class="tab"     onclick="showTab('health',this)">Health Note</button>
+    <button class="tab"     onclick="showTab('video',this)">YouTube Video</button>
+    <button class="tab"     onclick="showTab('subs',this)">Subscribers</button>
+    <button class="tab"     onclick="showTab('ana',this)">Analytics</button>
+    <button class="tab"     onclick="showTab('nl',this)">Newsletter</button>
   </nav>
 
-  <div class="admin-body">
+  <div class="body">
 
-    <!-- ───────────────────────────────────────────────────── -->
-    <!-- 1 · NEW BLOG POST                                     -->
-    <!-- ───────────────────────────────────────────────────── -->
-    <div id="pane-blog" class="tab-pane active">
-      <h2 class="section-title">New Blog Post</h2>
-      <p class="section-desc">Fetches the template from GitHub, fills all fields, generates a complete ready-to-use HTML file.</p>
+    <!-- ──────────────────────────────────────────────── -->
+    <!-- 1 · BLOG POST                                    -->
+    <!-- ──────────────────────────────────────────────── -->
+    <div id="pane-blog" class="pane on">
+      <h2 class="pane-title">New Blog Post</h2>
+      <p class="pane-desc">Fills the GitHub template, creates <code>posts/[slug].html</code>, and adds the post card to <code>journal.html</code> — all in one commit.</p>
 
-      <div class="field">
+      <div class="f">
         <label>Post Title</label>
-        <input type="text" id="b-title" oninput="autoSlug()" placeholder="e.g. What the Portuguese Market Taught Me About Eating">
+        <input type="text" id="b-title" oninput="autoSlug()"
+          placeholder="e.g. What the Portuguese Market Taught Me About Eating">
       </div>
 
-      <div class="row2">
-        <div class="field">
-          <label>Slug (filename)</label>
+      <div class="g2">
+        <div class="f">
+          <label>Slug</label>
           <input type="text" id="b-slug" placeholder="what-the-portuguese-market-taught-me">
-          <p class="hint">Becomes posts/[slug].html</p>
+          <p class="hint">→ posts/[slug].html</p>
         </div>
-        <div class="field">
+        <div class="f">
           <label>Category</label>
           <select id="b-cat">
             <option value="Slow Living">Slow Living</option>
@@ -423,520 +378,646 @@
         </div>
       </div>
 
-      <div class="row2">
-        <div class="field">
+      <div class="g2">
+        <div class="f">
           <label>Date</label>
           <input type="date" id="b-date">
         </div>
-        <div class="field">
+        <div class="f">
           <label>Featured Image URL</label>
-          <input type="text" id="b-img" placeholder="https://... or content/images/filename.jpeg">
+          <input type="text" id="b-img" placeholder="content/images/filename.jpeg">
+          <p class="hint">Root-relative or full URL</p>
         </div>
       </div>
 
-      <div class="field">
+      <div class="f">
         <label>Meta Description</label>
-        <textarea id="b-meta" rows="2" placeholder="1–2 sentences, max 160 characters. What this post is about."></textarea>
-        <p class="hint" id="b-meta-count">0 / 160</p>
+        <textarea id="b-meta" rows="2"
+          placeholder="1–2 sentences for SEO. Max 160 characters."></textarea>
+        <p class="meta-count" id="b-mc">0 / 160</p>
       </div>
 
-      <div class="field">
+      <div class="f">
+        <label>Excerpt <span style="font-size:0.68rem;color:#a89880">(shown on journal.html card)</span></label>
+        <textarea id="b-excerpt" rows="2"
+          placeholder="Short summary for the post card. 1–2 sentences."></textarea>
+      </div>
+
+      <div class="f">
         <label>Introduction / Opening Paragraph</label>
-        <textarea id="b-intro" rows="3" placeholder="Hook the reader. Personal, specific, present tense."></textarea>
+        <textarea id="b-intro" rows="3"
+          placeholder="Opening paragraph for the post itself. Hook the reader."></textarea>
       </div>
 
-      <div class="field">
+      <div class="f">
         <label>Full Body</label>
-        <textarea id="b-body" rows="14" placeholder="Write sections here. Use &lt;h2&gt;, &lt;p&gt;, &lt;blockquote&gt; — or plain paragraphs separated by blank lines."></textarea>
+        <textarea id="b-body" rows="14"
+          placeholder="Write content here. Use &lt;h2&gt;, &lt;p&gt;, &lt;blockquote&gt; — or plain paragraphs separated by blank lines."></textarea>
       </div>
 
-      <button class="btn" id="b-btn" onclick="generatePost()">Generate Post HTML</button>
-
-      <div id="b-out" style="display:none">
-        <div class="output-box">
-          <div class="output-header">
-            <span class="output-label">posts/<span id="b-out-slug"></span>.html</span>
-            <button class="btn btn-sm" onclick="copyBox('b-html')">Copy HTML</button>
-          </div>
-          <textarea class="copyable" id="b-html" readonly rows="20"></textarea>
-        </div>
-
-        <hr class="divider">
-        <p style="font-size:0.8rem;color:#6b5c47;margin-bottom:0.6rem;font-weight:bold">Git commands</p>
-        <div class="git-block">
-          <p class="git-label">Run from project root:</p>
-          <code id="b-git"></code>
-        </div>
-
-        <div class="output-box" style="margin-top:1.2rem">
-          <div class="output-header">
-            <span class="output-label">journal.html post card — paste near top of post-grid</span>
-            <button class="btn btn-sm" onclick="copyBox('b-card')">Copy Card</button>
-          </div>
-          <textarea class="copyable" id="b-card" readonly rows="10"></textarea>
-        </div>
+      <div class="brow">
+        <button class="btn btn-green" id="b-pub" onclick="publishPost()">Publish Post to Website</button>
       </div>
+      <div id="b-st" class="status"></div>
     </div>
 
-    <!-- ───────────────────────────────────────────────────── -->
-    <!-- 2 · NEW HEALTH NOTE                                   -->
-    <!-- ───────────────────────────────────────────────────── -->
-    <div id="pane-health" class="tab-pane">
-      <h2 class="section-title">New Health Note</h2>
-      <p class="section-desc">Generates the HTML block to paste into healthnotes.html</p>
+    <!-- ──────────────────────────────────────────────── -->
+    <!-- 2 · HEALTH NOTE                                  -->
+    <!-- ──────────────────────────────────────────────── -->
+    <div id="pane-health" class="pane">
+      <h2 class="pane-title">New Health Note</h2>
+      <p class="pane-desc">Prepends a new note at the top of <code>healthnotes.html</code> and commits directly.</p>
 
-      <div class="row2">
-        <div class="field">
+      <div class="g2">
+        <div class="f">
           <label>Date</label>
           <input type="date" id="h-date">
         </div>
-        <div class="field">
-          <label>Source / Badge <span style="font-size:0.7rem;color:#a89880">(optional)</span></label>
-          <input type="text" id="h-source" placeholder="Reading: Outlive — Peter Attia">
+        <div class="f">
+          <label>Source / Badge <span style="font-size:0.68rem;color:#a89880">(optional)</span></label>
+          <input type="text" id="h-source"
+            placeholder="Reading: Outlive — Peter Attia">
         </div>
       </div>
 
-      <div class="field">
-        <label>Tags <span style="font-size:0.7rem;color:#a89880">(optional)</span></label>
+      <div class="f">
+        <label>Tags <span style="font-size:0.68rem;color:#a89880">(optional)</span></label>
         <input type="text" id="h-tags" placeholder="Longevity · Sleep · Circadian Rhythm">
       </div>
 
-      <div class="field">
+      <div class="f">
         <label>Title</label>
         <input type="text" id="h-title" placeholder="What I'm learning about...">
       </div>
 
-      <div class="field">
+      <div class="f">
         <label>Content</label>
-        <textarea id="h-content" rows="12" placeholder="Write your note. Blank lines become paragraphs. Or paste HTML directly."></textarea>
+        <textarea id="h-content" rows="12"
+          placeholder="Write your note. Blank lines become paragraphs. Or paste HTML directly."></textarea>
       </div>
 
-      <button class="btn" onclick="generateHealthNote()">Generate HTML</button>
-
-      <div id="h-out" style="display:none">
-        <div class="output-box" style="margin-top:1.5rem">
-          <div class="output-header">
-            <span class="output-label">Paste into healthnotes.html</span>
-            <button class="btn btn-sm" onclick="copyBox('h-html')">Copy HTML</button>
-          </div>
-          <textarea class="copyable" id="h-html" readonly rows="14"></textarea>
-          <div class="output-note">
-            Paste <strong>after</strong> the <code>&lt;!-- NOTE 1 --&gt;</code> comment, at the top of the main column inside <code>.content-with-sidebar &gt; div</code>
-          </div>
-        </div>
+      <div class="brow">
+        <button class="btn btn-green" id="h-pub" onclick="publishNote()">Add Note to Website</button>
       </div>
+      <div id="h-st" class="status"></div>
     </div>
 
-    <!-- ───────────────────────────────────────────────────── -->
-    <!-- 3 · YOUTUBE VIDEO                                     -->
-    <!-- ───────────────────────────────────────────────────── -->
-    <div id="pane-video" class="tab-pane">
-      <h2 class="section-title">Add YouTube Video</h2>
-      <p class="section-desc">Paste a YouTube URL or Video ID to generate an embed card</p>
+    <!-- ──────────────────────────────────────────────── -->
+    <!-- 3 · YOUTUBE VIDEO                                -->
+    <!-- ──────────────────────────────────────────────── -->
+    <div id="pane-video" class="pane">
+      <h2 class="pane-title">Add YouTube Video</h2>
+      <p class="pane-desc">Injects a real embed card into <code>journal.html</code> or <code>index.html</code> and commits.</p>
 
-      <div class="field">
+      <div class="f">
         <label>YouTube URL or Video ID</label>
-        <input type="text" id="v-url" oninput="previewVid()" placeholder="https://youtube.com/watch?v=... or bare video ID">
-        <p class="hint" id="v-id-hint"></p>
+        <input type="text" id="v-url" oninput="previewVid()"
+          placeholder="https://youtube.com/watch?v=...  or  bare video ID">
+        <p class="hint" id="v-hint" style="color:#4a9a6a"></p>
       </div>
 
-      <div class="row2">
-        <div class="field">
+      <div class="g2">
+        <div class="f">
           <label>Video Title</label>
           <input type="text" id="v-title" placeholder="e.g. A Slow Morning in Central Portugal">
         </div>
-        <div class="field">
+        <div class="f">
           <label>Add to Page</label>
           <select id="v-page">
-            <option value="journal">journal.html — Latest Videos section</option>
-            <option value="home">index.html — Homepage</option>
+            <option value="journal">journal.html — Latest Videos</option>
+            <option value="index">index.html — Homepage</option>
           </select>
         </div>
       </div>
 
-      <button class="btn" onclick="generateVideo()">Generate Embed Card</button>
-
-      <div id="v-out" style="display:none">
-        <div class="output-box" style="margin-top:1.5rem">
-          <div class="output-header">
-            <span class="output-label">Video Card HTML</span>
-            <button class="btn btn-sm" onclick="copyBox('v-html')">Copy HTML</button>
-          </div>
-          <textarea class="copyable" id="v-html" readonly rows="14"></textarea>
-          <div class="output-note" id="v-note"></div>
-        </div>
+      <div class="brow">
+        <button class="btn btn-green" id="v-pub" onclick="publishVideo()">Add Video to Website</button>
       </div>
+      <div id="v-st" class="status"></div>
     </div>
 
-    <!-- ───────────────────────────────────────────────────── -->
-    <!-- 4 · SUBSCRIBERS                                       -->
-    <!-- ───────────────────────────────────────────────────── -->
-    <div id="pane-subscribers" class="tab-pane">
-      <h2 class="section-title">Subscribers</h2>
-      <p class="section-desc">Live from the Cloudflare Worker KV store</p>
-
-      <div class="btn-row" style="margin-top:0">
-        <button class="btn" id="sub-btn" onclick="loadSubscribers()">Load Subscribers</button>
-        <button class="btn btn-outline" id="sub-csv-btn" style="display:none" onclick="exportCSV()">Export CSV</button>
+    <!-- ──────────────────────────────────────────────── -->
+    <!-- 4 · SUBSCRIBERS                                  -->
+    <!-- ──────────────────────────────────────────────── -->
+    <div id="pane-subs" class="pane">
+      <h2 class="pane-title">Subscribers</h2>
+      <p class="pane-desc">Live from Cloudflare KV</p>
+      <div class="brow" style="margin-top:0">
+        <button class="btn" id="s-load" onclick="loadSubs()">Load Subscribers</button>
+        <button class="btn btn-out" id="s-csv" style="display:none" onclick="exportCSV()">Export CSV</button>
       </div>
-
-      <div id="sub-status" style="margin-top:1rem"></div>
-
-      <div id="sub-meta" class="sub-meta" style="display:none;margin-top:1rem">
-        <div class="sub-pill"><strong id="sub-total">—</strong><br>Total in KV</div>
-        <div class="sub-pill"><strong id="sub-loaded">—</strong><br>Records loaded</div>
+      <div id="s-st" class="status"></div>
+      <div class="sub-pills" id="s-pills" style="display:none;margin-top:1rem">
+        <div class="pill">Total in KV: <strong id="s-total">—</strong></div>
+        <div class="pill">Loaded: <strong id="s-loaded">—</strong></div>
       </div>
-
-      <div class="table-wrap" id="sub-table-wrap" style="display:none;margin-top:0.5rem">
+      <div class="tw" id="s-table" style="display:none">
         <table>
-          <thead>
-            <tr>
-              <th>#</th><th>Email</th><th>Source</th>
-              <th>Interests</th><th>Date</th>
-            </tr>
-          </thead>
-          <tbody id="sub-body"></tbody>
+          <thead><tr>
+            <th>#</th><th>Email</th><th>Source</th>
+            <th>Interests</th><th>Date</th>
+          </tr></thead>
+          <tbody id="s-body"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- ───────────────────────────────────────────────────── -->
-    <!-- 5 · ANALYTICS                                         -->
-    <!-- ───────────────────────────────────────────────────── -->
-    <div id="pane-analytics" class="tab-pane">
-      <h2 class="section-title">Today's Analytics</h2>
-      <p class="section-desc" id="ana-date-label">Stats for today</p>
-
-      <button class="btn" onclick="loadAnalytics()">Load Stats</button>
-
-      <div id="ana-status" style="margin-top:1rem"></div>
-      <div id="ana-out" style="display:none;margin-top:1.5rem"></div>
+    <!-- ──────────────────────────────────────────────── -->
+    <!-- 5 · ANALYTICS                                    -->
+    <!-- ──────────────────────────────────────────────── -->
+    <div id="pane-ana" class="pane">
+      <h2 class="pane-title">Today's Analytics</h2>
+      <p class="pane-desc" id="ana-lbl">Stats for today</p>
+      <button class="btn" onclick="loadAna()">Load Stats</button>
+      <div id="ana-st" class="status"></div>
+      <div id="ana-out" style="display:none;margin-top:1.25rem"></div>
     </div>
 
-    <!-- ───────────────────────────────────────────────────── -->
-    <!-- 6 · SEND NEWSLETTER                                   -->
-    <!-- ───────────────────────────────────────────────────── -->
-    <div id="pane-newsletter" class="tab-pane">
-      <h2 class="section-title">Send Newsletter</h2>
-      <p class="section-desc">Composes and sends to subscribers via the Cloudflare Worker + Resend</p>
+    <!-- ──────────────────────────────────────────────── -->
+    <!-- 6 · NEWSLETTER                                   -->
+    <!-- ──────────────────────────────────────────────── -->
+    <div id="pane-nl" class="pane">
+      <h2 class="pane-title">Send Newsletter</h2>
+      <p class="pane-desc">Sends via Cloudflare Worker + Resend to all (or filtered) subscribers.</p>
 
-      <div class="field">
+      <div class="f">
         <label>Subject</label>
-        <input type="text" id="nl-subject" placeholder="e.g. A note from the olive grove — March 2026">
+        <input type="text" id="nl-sub" placeholder="e.g. A note from the olive grove — March 2026">
       </div>
-
-      <div class="field">
-        <label>Preview Text <span style="font-size:0.7rem;color:#a89880">(shows in inbox before opening)</span></label>
-        <input type="text" id="nl-preview" placeholder="The thing about slow mornings is...">
+      <div class="f">
+        <label>Preview Text <span style="font-size:0.68rem;color:#a89880">(inbox preview line)</span></label>
+        <input type="text" id="nl-prev" placeholder="The thing about slow mornings is...">
       </div>
-
-      <div class="field">
+      <div class="f">
         <label>Body</label>
-        <div class="editor-toolbar" id="nl-toolbar">
-          <button class="toolbar-btn" onclick="fmt('bold')" title="Bold"><b>B</b></button>
-          <button class="toolbar-btn" onclick="fmt('italic')" title="Italic"><i>I</i></button>
-          <button class="toolbar-btn" onclick="fmtH2()" title="Heading 2">H2</button>
-          <button class="toolbar-btn" onclick="fmtLink()" title="Insert link">Link</button>
-          <button class="toolbar-btn" onclick="fmtQuote()" title="Blockquote">❝</button>
-          <button class="toolbar-btn" onclick="fmtClear()" title="Clear formatting" style="color:#888">T&times;</button>
-          <button class="toolbar-btn btn-sm" style="margin-left:auto;font-size:0.72rem;color:#6b5c47" onclick="toggleSource()">Source HTML</button>
+        <div class="toolbar">
+          <button class="tb" onclick="fmt('bold')" title="Bold"><b>B</b></button>
+          <button class="tb" onclick="fmt('italic')" title="Italic"><i>I</i></button>
+          <button class="tb" onclick="fmtH2()" title="Heading">H2</button>
+          <button class="tb" onclick="fmtLink()" title="Link">Link</button>
+          <button class="tb" onclick="fmtQ()" title="Blockquote">❝</button>
+          <button class="tb" onclick="fmtClear()" title="Clear" style="color:#999">T✕</button>
+          <button class="tb btn-sm" style="margin-left:auto;font-size:0.69rem;color:#6b5c47"
+            onclick="toggleSrc()">HTML source</button>
         </div>
-        <div class="editor-area" id="nl-editor" contenteditable="true"
-          placeholder="Write your letter here…"></div>
-        <textarea id="nl-source" style="display:none;width:100%;min-height:200px;
-          font-family:monospace;font-size:0.78rem;padding:0.75rem;
+        <div class="editor" id="nl-editor" contenteditable="true"
+          data-placeholder="Write your letter here…"></div>
+        <textarea id="nl-src" style="display:none;width:100%;min-height:180px;
+          font-family:monospace;font-size:0.76rem;padding:0.7rem;
           border:1px solid #d9cfc4;border-top:none;outline:none"
-          placeholder="Raw HTML source"></textarea>
+          placeholder="Raw HTML"></textarea>
       </div>
-
-      <div class="field">
-        <label>Filter by Interests <span style="font-size:0.7rem;color:#a89880">(empty = send to everyone)</span></label>
-        <div class="interests-row">
-          <label class="interest-check"><input type="checkbox" id="nl-i-journal" value="journal"> Journal Posts</label>
-          <label class="interest-check"><input type="checkbox" id="nl-i-health"  value="health">  Health Notes</label>
-          <label class="interest-check"><input type="checkbox" id="nl-i-portugal" value="portugal"> Portugal Life</label>
-          <label class="interest-check"><input type="checkbox" id="nl-i-shop"    value="shop">   Shop Updates</label>
+      <div class="f">
+        <label>Filter by Interests <span style="font-size:0.68rem;color:#a89880">(empty = everyone)</span></label>
+        <div class="interests">
+          <label class="ck"><input type="checkbox" id="i-j" value="journal"> Journal Posts</label>
+          <label class="ck"><input type="checkbox" id="i-h" value="health">  Health Notes</label>
+          <label class="ck"><input type="checkbox" id="i-p" value="portugal"> Portugal Life</label>
+          <label class="ck"><input type="checkbox" id="i-s" value="shop">   Shop Updates</label>
         </div>
       </div>
-
-      <div class="btn-row">
-        <button class="btn btn-outline" onclick="previewNewsletter()">Preview Email</button>
-        <button class="btn btn-outline" id="nl-test-btn" onclick="sendTest()">Send TEST to coddinging@gmail.com</button>
-        <button class="btn btn-danger"  onclick="openConfirm()">Send to ALL Subscribers</button>
+      <div class="brow">
+        <button class="btn btn-out" onclick="previewNL()">Preview</button>
+        <button class="btn btn-out" id="nl-test-btn" onclick="sendTest()">Send TEST →  coddinging@gmail.com</button>
+        <button class="btn btn-red"  onclick="openConfirm()">Send to ALL</button>
       </div>
-
-      <div class="confirm-box" id="confirm-box">
-        <p><strong>This will send to all matching subscribers.</strong> This cannot be undone. Type <code>SEND</code> to confirm:</p>
-        <input type="text" id="confirm-input" placeholder="SEND" oninput="checkConfirm()">
-        <button class="btn btn-danger btn-sm" id="confirm-btn" onclick="sendAll()" disabled style="margin-left:0.75rem">Send Now</button>
-        <button class="btn btn-outline btn-sm" onclick="closeConfirm()" style="margin-left:0.5rem">Cancel</button>
+      <div class="confirm-box" id="cfm">
+        <p><strong>This sends to all matching subscribers and cannot be undone.</strong><br>
+          Type <code>SEND</code> to confirm:</p>
+        <input type="text" id="cfm-in" placeholder="SEND" oninput="checkCfm()">
+        <button class="btn btn-red btn-sm" id="cfm-btn" onclick="sendAll()" disabled style="margin-left:0.6rem">Send Now</button>
+        <button class="btn btn-out btn-sm" onclick="closeCfm()" style="margin-left:0.4rem">Cancel</button>
       </div>
-
-      <div id="nl-status" style="margin-top:1rem"></div>
+      <div id="nl-st" class="status"></div>
     </div>
 
-  </div><!-- /.admin-body -->
+  </div><!-- /.body -->
 </div><!-- /#admin -->
 
-<!-- ── Email Preview Modal ─────────────────────────────────── -->
-<div class="modal-overlay" id="preview-modal" onclick="closePreviewModal(event)">
+<!-- ── Preview Modal ───────────────────────────────────── -->
+<div class="overlay" id="modal" onclick="closeModal(event)">
   <div class="modal">
-    <div class="modal-header">
+    <div class="modal-hdr">
       <h3>Email Preview</h3>
-      <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:0.78rem;color:#8a7a6a;margin-bottom:0.5rem">
-        Subject: <strong id="preview-subject"></strong>
+      <p style="font-size:0.76rem;color:#8a7a6a;margin-bottom:0.5rem">
+        Subject: <strong id="modal-sub"></strong>
       </p>
-      <div class="email-preview" id="preview-body"></div>
+      <div class="em-preview" id="modal-body"></div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════ -->
-<!--  SCRIPT                                                    -->
-<!-- ══════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<!--  SCRIPT                                                -->
+<!-- ══════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
-// ── Constants ─────────────────────────────────────────────────
-const PASSWORD_HASH = '7b9063b279a18dd730013ef215fdd1b6fa1f75d7dc7ccf1977ab7feb6d9cf2a8';
-const ADMIN_KEY     = 'aterra2026';
-const FORM_WORKER   = 'https://atl-form-handler.coddinging.workers.dev';
-const ANA_WORKER    = 'https://atl-analytics.coddinging.workers.dev';
-const TEMPLATE_URL  = 'https://raw.githubusercontent.com/Marin-N/aterraliberty/main/posts/_template.html';
-const TIMEOUT_MS    = 30 * 60 * 1000; // 30 minutes
+// ── Constants ─────────────────────────────────────────────
+const PW_HASH    = '7b9063b279a18dd730013ef215fdd1b6fa1f75d7dc7ccf1977ab7feb6d9cf2a8';
+const ADMIN_KEY  = 'aterra2026';
+const GH_REPO   = 'Marin-N/aterraliberty';
+const GH_API    = 'https://api.github.com/repos/' + GH_REPO;
+const TMPL_URL  = 'https://raw.githubusercontent.com/' + GH_REPO + '/main/posts/_template.html';
+const FORM_WKR  = 'https://atl-form-handler.coddinging.workers.dev';
+const ANA_WKR   = 'https://atl-analytics.coddinging.workers.dev';
+const TIMEOUT   = 30 * 60 * 1000;
 
-// ── Init ──────────────────────────────────────────────────────
-(function init() {
-  // Check existing session
-  const saved = sessionStorage.getItem('atl_admin');
-  if (saved === PASSWORD_HASH) { unlock(); return; }
-
-  // Enter key on password field
-  document.getElementById('pwInput').addEventListener('keydown', e => {
+// ── Init ──────────────────────────────────────────────────
+(function () {
+  if (sessionStorage.getItem('atl_auth') === PW_HASH) unlock();
+  document.getElementById('pw').addEventListener('keydown', e => {
     if (e.key === 'Enter') doLogin();
   });
-
-  // Set today defaults
-  const today = todayISO();
-  setIfExists('b-date', today);
-  setIfExists('h-date', today);
-
-  // Analytics date label
-  const el = document.getElementById('ana-date-label');
-  if (el) el.textContent = 'Stats for ' + formatDate(today);
-
-  // Meta description counter
-  const metaEl = document.getElementById('b-meta');
-  if (metaEl) metaEl.addEventListener('input', () => {
-    document.getElementById('b-meta-count').textContent =
-      metaEl.value.length + ' / 160';
+  const today = isoToday();
+  setValue('b-date', today);
+  setValue('h-date', today);
+  const el = document.getElementById('ana-lbl');
+  if (el) el.textContent = 'Stats for ' + fmtDate(today);
+  // Meta counter
+  document.getElementById('b-meta').addEventListener('input', function () {
+    document.getElementById('b-mc').textContent = this.value.length + ' / 160';
   });
+  // Restore saved token
+  const saved = sessionStorage.getItem('gh_token');
+  if (saved) document.getElementById('gh-token').value = saved;
 })();
 
-function setIfExists(id, val) {
+function setValue(id, val) {
   const el = document.getElementById(id);
   if (el) el.value = val;
 }
 
-// ── Auth ──────────────────────────────────────────────────────
+// ── Auth ──────────────────────────────────────────────────
 async function doLogin() {
-  const pw = document.getElementById('pwInput').value;
+  const pw = document.getElementById('pw').value;
   if (!pw) return;
   const hash = await sha256(pw);
-  if (hash === PASSWORD_HASH) {
-    sessionStorage.setItem('atl_admin', hash);
+  if (hash === PW_HASH) {
+    sessionStorage.setItem('atl_auth', hash);
     unlock();
   } else {
-    document.getElementById('pwError').style.display = 'block';
-    document.getElementById('pwInput').value = '';
-    document.getElementById('pwInput').focus();
+    document.getElementById('pw-err').style.display = 'block';
+    document.getElementById('pw').value = '';
+    document.getElementById('pw').focus();
   }
 }
 
 function unlock() {
   document.getElementById('gate').classList.add('hidden');
-  document.getElementById('admin').classList.add('visible');
-  startInactivityTimer();
+  document.getElementById('admin').classList.add('on');
+  startTimer();
 }
 
 function doLogout() {
-  sessionStorage.removeItem('atl_admin');
+  sessionStorage.removeItem('atl_auth');
   location.reload();
 }
 
-// ── SHA-256 ───────────────────────────────────────────────────
 async function sha256(str) {
-  const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// ── Inactivity Timer ──────────────────────────────────────────
-let inactivityEnd = 0;
-let timerInterval;
+// ── Inactivity Timer ──────────────────────────────────────
+let timerEnd, timerTick;
 
-function startInactivityTimer() {
-  inactivityEnd = Date.now() + TIMEOUT_MS;
-  ['click','keypress','mousemove','touchstart'].forEach(evt =>
-    document.addEventListener(evt, resetTimer, { passive: true })
+function startTimer() {
+  timerEnd = Date.now() + TIMEOUT;
+  ['click', 'keypress', 'mousemove', 'touchstart'].forEach(e =>
+    document.addEventListener(e, resetTimer, { passive: true })
   );
-  timerInterval = setInterval(tickTimer, 1000);
+  timerTick = setInterval(tickTimer, 1000);
 }
 
-function resetTimer() {
-  inactivityEnd = Date.now() + TIMEOUT_MS;
-}
+function resetTimer() { timerEnd = Date.now() + TIMEOUT; }
 
 function tickTimer() {
-  const remaining = Math.max(0, inactivityEnd - Date.now());
-  const m = Math.floor(remaining / 60000);
-  const s = Math.floor((remaining % 60000) / 1000);
-  const display = document.getElementById('timerDisplay');
-  if (display) display.textContent = m + ':' + String(s).padStart(2,'0');
-  if (remaining === 0) {
-    clearInterval(timerInterval);
-    sessionStorage.removeItem('atl_admin');
+  const rem = Math.max(0, timerEnd - Date.now());
+  const m = Math.floor(rem / 60000);
+  const s = Math.floor((rem % 60000) / 1000);
+  const el = document.getElementById('timer');
+  if (el) el.textContent = m + ':' + String(s).padStart(2, '0');
+  if (rem === 0) {
+    clearInterval(timerTick);
+    sessionStorage.removeItem('atl_auth');
     alert('Session expired (30 min inactivity). Please log in again.');
     location.reload();
   }
 }
 
-// ── Tab Navigation ────────────────────────────────────────────
+// ── Tabs ──────────────────────────────────────────────────
 function showTab(name, btn) {
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('pane-' + name).classList.add('active');
-  if (btn) btn.classList.add('active');
-  else {
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'"))
-        b.classList.add('active');
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('pane-' + name).classList.add('on');
+  if (btn) btn.classList.add('on');
+}
+
+// ── GitHub Token ──────────────────────────────────────────
+function saveToken() {
+  const val = document.getElementById('gh-token').value.trim();
+  sessionStorage.setItem('gh_token', val);
+  const st = document.getElementById('gh-st');
+  st.textContent = val ? 'saved' : '';
+  st.className = 'gh-status' + (val ? ' ok' : '');
+}
+
+async function testToken() {
+  const token = document.getElementById('gh-token').value.trim();
+  const st    = document.getElementById('gh-st');
+  const btn   = document.getElementById('gh-test');
+  if (!token) { setGhStatus('err', 'Enter a token first'); return; }
+  btn.disabled = true; btn.textContent = 'Testing…';
+  try {
+    const res = await fetch(GH_API, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github+json' }
     });
+    if (res.status === 200) {
+      sessionStorage.setItem('gh_token', token);
+      setGhStatus('ok', '✓ Connected to ' + GH_REPO);
+    } else if (res.status === 401) {
+      setGhStatus('err', '✗ Invalid token');
+    } else {
+      setGhStatus('err', '✗ HTTP ' + res.status);
+    }
+  } catch (e) {
+    setGhStatus('err', '✗ ' + e.message);
   }
+  btn.disabled = false; btn.textContent = 'Test';
 }
 
-// ── Utilities ─────────────────────────────────────────────────
-function todayISO() { return new Date().toISOString().slice(0,10); }
-
-function formatDate(iso) {
-  return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB',
-    { day:'numeric', month:'long', year:'numeric' });
+function setGhStatus(type, msg) {
+  const el = document.getElementById('gh-st');
+  el.textContent = msg;
+  el.className = 'gh-status ' + type;
 }
 
-function formatMonthYear(iso) {
+function getToken() {
+  const t = sessionStorage.getItem('gh_token') || document.getElementById('gh-token').value.trim();
+  if (!t) throw new Error('GitHub token not set. Add it in the GitHub bar above and click Test.');
+  return t;
+}
+
+// ── GitHub API ─────────────────────────────────────────────
+function ghHeaders() {
+  return {
+    'Authorization': 'token ' + getToken(),
+    'Accept': 'application/vnd.github+json',
+    'Content-Type': 'application/json',
+  };
+}
+
+async function ghGetFile(path) {
+  const res = await fetch(GH_API + '/contents/' + path, { headers: ghHeaders() });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error('GitHub GET ' + path + ': ' + (e.message || 'HTTP ' + res.status));
+  }
+  const data = await res.json();
+  return { sha: data.sha, content: b64decode(data.content) };
+}
+
+async function ghPutFile(path, content, sha, message) {
+  const res = await fetch(GH_API + '/contents/' + path, {
+    method: 'PUT',
+    headers: ghHeaders(),
+    body: JSON.stringify({ message, content: b64encode(content), sha }),
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error('GitHub PUT ' + path + ': ' + (e.message || 'HTTP ' + res.status));
+  }
+  return res.json();
+}
+
+// Multi-file commit via Git Tree API (for blog post — 2 files at once)
+async function ghMultiCommit(files, message) {
+  const h = ghHeaders();
+
+  // 1. Get HEAD
+  const refRes = await fetch(GH_API + '/git/refs/heads/main', { headers: h });
+  if (!refRes.ok) throw new Error('GitHub: Cannot read HEAD ref');
+  const ref = await refRes.json();
+  const headSha = ref.object.sha;
+
+  // 2. Get tree SHA from HEAD commit
+  const comRes = await fetch(GH_API + '/git/commits/' + headSha, { headers: h });
+  const com = await comRes.json();
+  const treeSha = com.tree.sha;
+
+  // 3. Create blobs
+  const blobs = await Promise.all(files.map(async f => {
+    const bRes = await fetch(GH_API + '/git/blobs', {
+      method: 'POST', headers: h,
+      body: JSON.stringify({ content: f.content, encoding: 'utf-8' }),
+    });
+    if (!bRes.ok) {
+      const e = await bRes.json().catch(() => ({}));
+      throw new Error('GitHub blob ' + f.path + ': ' + (e.message || 'HTTP ' + bRes.status));
+    }
+    const blob = await bRes.json();
+    return { path: f.path, mode: '100644', type: 'blob', sha: blob.sha };
+  }));
+
+  // 4. Create new tree
+  const treeRes = await fetch(GH_API + '/git/trees', {
+    method: 'POST', headers: h,
+    body: JSON.stringify({ base_tree: treeSha, tree: blobs }),
+  });
+  const tree = await treeRes.json();
+
+  // 5. Create commit
+  const newComRes = await fetch(GH_API + '/git/commits', {
+    method: 'POST', headers: h,
+    body: JSON.stringify({ message, tree: tree.sha, parents: [headSha] }),
+  });
+  const newCom = await newComRes.json();
+
+  // 6. Update HEAD ref
+  const updRes = await fetch(GH_API + '/git/refs/heads/main', {
+    method: 'PATCH', headers: h,
+    body: JSON.stringify({ sha: newCom.sha }),
+  });
+  if (!updRes.ok) {
+    const e = await updRes.json().catch(() => ({}));
+    throw new Error('GitHub: Failed to update HEAD: ' + (e.message || 'HTTP ' + updRes.status));
+  }
+  return newCom;
+}
+
+// ── Base64 (UTF-8 safe) ────────────────────────────────────
+function b64encode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin);
+}
+
+function b64decode(b64) {
+  const bin = atob((b64 || '').replace(/\n/g, ''));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+// ── Utilities ──────────────────────────────────────────────
+function isoToday() { return new Date().toISOString().slice(0, 10); }
+
+function fmtDate(iso) {
   return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB',
-    { month:'long', year:'numeric' });
+    { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function fmtMonthYear(iso) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB',
+    { month: 'long', year: 'numeric' });
 }
 
 function slugify(s) {
   return s.toLowerCase()
-    .replace(/&/g,'and').replace(/[^a-z0-9\s-]/g,'')
-    .trim().replace(/\s+/g,'-').replace(/-+/g,'-');
+    .replace(/&/g, 'and').replace(/[^a-z0-9\s-]/g, '')
+    .trim().replace(/\s+/g, '-').replace(/-+/g, '-');
 }
 
 function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function plainToHtml(text) {
-  if (/<[a-z][\s\S]*?>/i.test(text)) return text; // already HTML
+  if (/<[a-z][\s\S]*?>/i.test(text)) return text;
   return text.split(/\n\s*\n/).filter(p => p.trim())
-    .map(p => '<p>' + p.trim().replace(/\n/g,'<br>') + '</p>')
+    .map(p => '<p>' + p.trim().replace(/\n/g, '<br>') + '</p>')
     .join('\n');
 }
 
-function readTime(text) {
-  return Math.max(1, Math.ceil(text.replace(/<[^>]+>/g,'').trim().split(/\s+/).length / 200));
+function wordCount(text) {
+  return text.replace(/<[^>]+>/g, '').trim().split(/\s+/).length;
 }
 
-function copyBox(id) {
-  const el = document.getElementById(id);
-  el.select(); el.setSelectionRange(0, 99999);
-  navigator.clipboard.writeText(el.value).catch(() => document.execCommand('copy'));
-  const btn = event.currentTarget;
-  const orig = btn.textContent;
-  btn.textContent = 'Copied!';
-  btn.style.background = '#4a9a6a';
-  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 1800);
-}
+function readTime(text) { return Math.max(1, Math.ceil(wordCount(text) / 200)); }
 
-function autoSlug() {
-  document.getElementById('b-slug').value = slugify(document.getElementById('b-title').value);
-}
-
-// ── Status Helpers ────────────────────────────────────────────
-function setStatus(id, type, msg) {
-  document.getElementById(id).innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
+function setStatus(id, cls, msg) {
+  document.getElementById(id).innerHTML = '<div class="' + cls + '">' + msg + '</div>';
 }
 
 function setLoading(id, msg) {
   document.getElementById(id).innerHTML =
-    '<span class="loading"><span class="spinner"></span>' + msg + '</span>';
+    '<span><span class="spinner"></span>' + msg + '</span>';
 }
 
-// ── Section 1: Blog Post ──────────────────────────────────────
-async function generatePost() {
-  const title = document.getElementById('b-title').value.trim();
-  const slug  = document.getElementById('b-slug').value.trim() || slugify(title);
-  const cat   = document.getElementById('b-cat').value;
-  const date  = document.getElementById('b-date').value;
-  const img   = document.getElementById('b-img').value.trim();
-  const meta  = document.getElementById('b-meta').value.trim();
-  const intro = document.getElementById('b-intro').value.trim();
-  const body  = document.getElementById('b-body').value.trim();
+function setBusy(btnId, txt) {
+  const b = document.getElementById(btnId);
+  if (b) { b.disabled = true; b.textContent = txt; }
+}
 
-  if (!title) { alert('Please enter a post title.'); return; }
-  if (!date)  { alert('Please select a date.'); return; }
+function setReady(btnId, txt) {
+  const b = document.getElementById(btnId);
+  if (b) { b.disabled = false; b.textContent = txt; }
+}
 
-  const btn = document.getElementById('b-btn');
-  btn.textContent = 'Fetching template…'; btn.disabled = true;
+function autoSlug() {
+  document.getElementById('b-slug').value =
+    slugify(document.getElementById('b-title').value);
+}
 
-  let tmpl;
+// ── Section 1: Blog Post ───────────────────────────────────
+async function publishPost() {
+  const title   = document.getElementById('b-title').value.trim();
+  const slug    = document.getElementById('b-slug').value.trim() || slugify(title);
+  const cat     = document.getElementById('b-cat').value;
+  const date    = document.getElementById('b-date').value;
+  const img     = document.getElementById('b-img').value.trim();
+  const meta    = document.getElementById('b-meta').value.trim();
+  const excerpt = document.getElementById('b-excerpt').value.trim();
+  const intro   = document.getElementById('b-intro').value.trim();
+  const body    = document.getElementById('b-body').value.trim();
+
+  if (!title)  { alert('Enter a post title.'); return; }
+  if (!date)   { alert('Select a date.'); return; }
+  if (!intro && !body) { alert('Enter introduction or body content.'); return; }
+
+  setBusy('b-pub', 'Publishing…');
+  setLoading('b-st', 'Fetching template from GitHub…');
+
   try {
-    const r = await fetch(TEMPLATE_URL);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    tmpl = await r.text();
-  } catch(e) {
-    btn.textContent = 'Generate Post HTML'; btn.disabled = false;
-    alert('Could not fetch template: ' + e.message);
-    return;
+    // 1. Fetch template
+    const tmplRes = await fetch(TMPL_URL);
+    if (!tmplRes.ok) throw new Error('Cannot fetch template: HTTP ' + tmplRes.status);
+    const tmpl = await tmplRes.text();
+
+    // 2. Build post HTML
+    const postHtml = buildPostHtml(tmpl, { title, slug, cat, date, img, meta, intro, body });
+
+    // 3. Fetch current journal.html
+    setLoading('b-st', 'Fetching journal.html from GitHub…');
+    const { sha: jSha, content: jHtml } = await ghGetFile('journal.html');
+
+    // 4. Build post card and inject
+    const card    = buildPostCard({ slug, title, cat, date, img, excerpt, intro, body });
+    const jMarker = '<article class="post-card"';
+    const jIdx    = jHtml.indexOf(jMarker);
+    if (jIdx === -1) throw new Error('Cannot find post card insertion point in journal.html. Contact dev.');
+    const newJHtml = jHtml.slice(0, jIdx) + card + '\n\n        ' + jHtml.slice(jIdx);
+
+    // 5. Commit both files
+    setLoading('b-st', 'Committing to GitHub (2 files)…');
+    await ghMultiCommit([
+      { path: 'posts/' + slug + '.html', content: postHtml },
+      { path: 'journal.html',            content: newJHtml },
+    ], 'Admin: Add post "' + title + '"');
+
+    setStatus('b-st', 's-ok',
+      '✓ Post published! <strong>' + esc(title) + '</strong><br>' +
+      'Live at <a href="https://aterraliberty.com/posts/' + slug + '.html" ' +
+      'target="_blank">aterraliberty.com/posts/' + slug + '.html</a> in ~60 seconds.');
+  } catch (e) {
+    setStatus('b-st', 's-err', '<strong>Error:</strong> ' + esc(e.message));
   }
 
-  const catSlug = { 'Slow Living':'slow-living', 'Food & Health':'food-health',
-    'Food &amp; Health':'food-health', 'Portugal Life':'portugal-life', 'Longevity':'longevity' }[cat] || slugify(cat);
-  const catDisplay = cat.replace('&amp;','&');
-  const monthYear  = formatMonthYear(date);
-  const allText    = (intro + ' ' + body).replace(/<[^>]+>/g,'');
-  const rt         = readTime(allText);
-  const metaDesc   = meta || (intro || body.replace(/<[^>]+>/g,'')).slice(0,160);
+  setReady('b-pub', 'Publish Post to Website');
+}
 
-  // Image src
-  let imgSrc = '';
+function buildPostHtml(tmpl, { title, slug, cat, date, img, meta, intro, body }) {
+  const catSlug   = { 'Slow Living':'slow-living', 'Food & Health':'food-health',
+    'Food &amp; Health':'food-health', 'Portugal Life':'portugal-life',
+    'Longevity':'longevity' }[cat] || slugify(cat);
+  const catDsp    = cat.replace('&amp;', '&');
+  const monthYear = fmtMonthYear(date);
+  const allText   = intro + ' ' + body;
+  const rt        = readTime(allText);
+  const metaDesc  = meta || (intro || body.replace(/<[^>]+>/g, '')).slice(0, 160);
+
+  let imgSrc = '../content/images/[IMAGE-FILENAME].jpeg';
   if (img) {
-    imgSrc = img.startsWith('http') ? img : (img.startsWith('../') ? img : '../' + img);
+    if (img.startsWith('http'))  imgSrc = img;
+    else if (img.startsWith('content/')) imgSrc = '../' + img;
+    else imgSrc = img.startsWith('../') ? img : '../' + img;
   }
 
-  // Body HTML
   const introHtml = intro ? '<p>' + intro + '</p>' : '';
   const bodyHtml  = body  ? plainToHtml(body) : '';
   const fullBody  = [introHtml, bodyHtml].filter(Boolean).join('\n\n            ');
 
-  // Template replacements
   let html = tmpl;
-  html = html.replace(/\[POST TITLE\]/g, title);
-  html = html.replace(/\[META DESCRIPTION[^\]]*\]/g, metaDesc);
-  html = html.replace(/\[CATEGORY DISPLAY NAME\]/g, catDisplay);
+  html = html.replace(/\[POST TITLE\]/g, esc(title));
+  html = html.replace(/\[META DESCRIPTION[^\]]*\]/g, esc(metaDesc));
+  html = html.replace(/\[CATEGORY DISPLAY NAME\]/g, catDsp);
   html = html.replace(/data-category="[^"]*"/g, 'data-category="' + catSlug + '"');
   html = html.replace('[Month Year]', monthYear);
   html = html.replace('[X min read]', rt + ' min read');
   html = html.replace('[IMAGE ALT TEXT]', esc(title));
 
-  if (imgSrc) {
-    html = html.replace(/src="\.\.\/content\/images\/\[IMAGE-FILENAME\]\.jpeg"/, 'src="' + imgSrc + '"');
+  if (img) {
+    html = html.replace(
+      /src="\.\.\/content\/images\/\[IMAGE-FILENAME\]\.jpeg"/,
+      'src="' + imgSrc + '"'
+    );
   } else {
     html = html.replace('[IMAGE-FILENAME]', slug);
   }
@@ -946,127 +1027,194 @@ async function generatePost() {
     /<!-- Opening paragraph[^>]*-->\s*<p>\[Opening paragraph[^\]]*\]<\/p>[\s\S]*?(?=<!-- Navigation:)/,
     fullBody + '\n\n            '
   );
-
-  document.getElementById('b-out-slug').textContent = slug;
-  document.getElementById('b-html').value = html;
-  document.getElementById('b-git').textContent =
-    '# Save as:  posts/' + slug + '.html\n\ngit add posts/' + slug + '.html\ngit commit -m "Add post: ' + title + '"\ngit push origin main';
-  document.getElementById('b-card').value = buildPostCard(slug, title, catDisplay, catSlug, monthYear, rt, imgSrc);
-
-  document.getElementById('b-out').style.display = '';
-  btn.textContent = 'Generate Post HTML'; btn.disabled = false;
-  document.getElementById('b-out').scrollIntoView({ behavior:'smooth', block:'start' });
+  return html;
 }
 
-function buildPostCard(slug, title, catDisplay, catSlug, monthYear, rt, imgSrc) {
-  const src = imgSrc.startsWith('../') ? imgSrc.slice(3) : imgSrc;
-  return `<!-- Post Card: ${title} -->
-<article class="post-card" data-category="${catSlug}">
-  <a href="posts/${slug}.html" class="post-card__image-link">
-    <img src="${src}" alt="${esc(title)}" loading="lazy">
-  </a>
-  <div class="post-card__body">
-    <span class="post-card__category">${catDisplay}</span>
-    <h2 class="post-card__title"><a href="posts/${slug}.html">${esc(title)}</a></h2>
-    <div class="post-card__meta">
-      <span>${monthYear}</span>
-      <span>${rt} min read</span>
-    </div>
-  </div>
-</article>`;
+function buildPostCard({ slug, title, cat, date, img, excerpt, intro, body }) {
+  const catSlug = { 'Slow Living':'slow-living', 'Food & Health':'food-health',
+    'Food &amp; Health':'food-health', 'Portugal Life':'portugal-life',
+    'Longevity':'longevity' }[cat] || slugify(cat);
+  const catDsp    = cat.replace('&amp;', '&');
+  const monthYear = fmtMonthYear(date);
+  const allText   = intro + ' ' + body;
+  const rt        = readTime(allText);
+  // Excerpt: use provided, else first 160 chars of intro
+  const ex = excerpt || (intro || body.replace(/<[^>]+>/g, '')).slice(0, 160);
+
+  // Image: root-relative for journal.html (no ../)
+  let imgSrc = 'content/images/placeholder.jpeg';
+  if (img) {
+    if (img.startsWith('http')) imgSrc = img;
+    else if (img.startsWith('../')) imgSrc = img.slice(3);
+    else if (img.startsWith('content/')) imgSrc = img;
+    else imgSrc = img;
+  }
+
+  return `<!-- Post: ${esc(title)} -->
+        <article class="post-card" data-category="${catSlug}">
+          <a href="posts/${slug}.html" class="post-card__image-link">
+            <div class="post-card__image"><img src="${imgSrc}" alt="${esc(title)}" loading="lazy"></div>
+          </a>
+          <div class="post-card__body">
+            <span class="post-card__category">${catDsp}</span>
+            <h3 class="post-card__title">${esc(title)}</h3>
+            <p class="post-card__excerpt">${esc(ex)}</p>
+            <div class="post-card__meta"><span>${monthYear}</span><span>${rt} min read</span></div>
+          </div>
+        </article>`;
 }
 
-// ── Section 2: Health Note ────────────────────────────────────
-function generateHealthNote() {
+// ── Section 2: Health Note ─────────────────────────────────
+async function publishNote() {
   const date    = document.getElementById('h-date').value;
   const source  = document.getElementById('h-source').value.trim();
   const tags    = document.getElementById('h-tags').value.trim();
   const title   = document.getElementById('h-title').value.trim();
   const content = document.getElementById('h-content').value.trim();
 
-  if (!title)   { alert('Please enter a title.'); return; }
-  if (!content) { alert('Please enter content.'); return; }
+  if (!title)   { alert('Enter a title.'); return; }
+  if (!content) { alert('Enter content.'); return; }
 
-  const fmtDate = date ? formatDate(date) : '';
-  const contentHtml = plainToHtml(content);
+  setBusy('h-pub', 'Publishing…');
+  setLoading('h-st', 'Fetching healthnotes.html from GitHub…');
 
-  let html = '<!-- Health Note: ' + esc(title) + ' -->\n';
-  html += '<div class="health-note-card">\n';
-  if (source) html += '  <div class="health-note-card__source-badge">' + esc(source) + '</div>\n';
-  if (tags)   html += '  <span class="health-note-card__tag">' + esc(tags) + '</span>\n';
-  html += '  <h2 class="health-note-card__title">' + esc(title) + '</h2>\n';
-  if (fmtDate) html += '  <p style="font-size:0.78rem;color:#8a7a6a;margin-bottom:1rem">' + fmtDate + '</p>\n';
-  html += '  <div class="health-note-card__section">\n    ' + contentHtml + '\n  </div>\n</div>';
+  try {
+    const { sha, content: html } = await ghGetFile('healthnotes.html');
 
-  document.getElementById('h-html').value = html;
-  document.getElementById('h-out').style.display = '';
-  document.getElementById('h-out').scrollIntoView({ behavior:'smooth', block:'start' });
+    const noteHtml = buildNoteHtml({ date, source, tags, title, content });
+
+    // Inject before <!-- NOTE 1 --> or before first health-note-card
+    let idx = html.indexOf('<!-- NOTE 1 -->');
+    if (idx !== -1) {
+      // insert before the comment, with correct indentation
+      const lineStart = html.lastIndexOf('\n', idx) + 1;
+      idx = lineStart;
+    } else {
+      idx = html.indexOf('<div class="health-note-card">');
+      if (idx === -1) throw new Error('Cannot find insertion point in healthnotes.html.');
+    }
+
+    const newHtml = html.slice(0, idx) + noteHtml + '\n\n          ' + html.slice(idx);
+
+    setLoading('h-st', 'Committing to GitHub…');
+    await ghPutFile('healthnotes.html', newHtml, sha,
+      'Admin: Add health note "' + title + '"');
+
+    setStatus('h-st', 's-ok',
+      '✓ Health note added! Live at ' +
+      '<a href="https://aterraliberty.com/healthnotes.html" target="_blank">healthnotes.html</a> in ~60 seconds.');
+  } catch (e) {
+    setStatus('h-st', 's-err', '<strong>Error:</strong> ' + esc(e.message));
+  }
+
+  setReady('h-pub', 'Add Note to Website');
 }
 
-// ── Section 3: YouTube Video ──────────────────────────────────
+function buildNoteHtml({ date, source, tags, title, content }) {
+  const fDate = date ? fmtDate(date) : '';
+  const ch    = plainToHtml(content);
+  let html = '<!-- Health Note: ' + esc(title) + ' -->\n';
+  html += '          <div class="health-note-card">\n';
+  if (source) html += '            <div class="health-note-card__source-badge">' + esc(source) + '</div>\n';
+  if (tags)   html += '            <span class="health-note-card__tag">' + esc(tags) + '</span>\n';
+  html += '            <h2 class="health-note-card__title">' + esc(title) + '</h2>\n';
+  if (fDate)  html += '            <p style="font-size:0.78rem;color:#8a7a6a;margin-bottom:1rem">' + fDate + '</p>\n';
+  html += '            <div class="health-note-card__section">\n';
+  html += '              ' + ch + '\n';
+  html += '            </div>\n';
+  html += '          </div>';
+  return html;
+}
+
+// ── Section 3: YouTube Video ───────────────────────────────
 function extractVid(input) {
   input = (input || '').trim();
   let m;
-  m = input.match(/[?&]v=([a-zA-Z0-9_-]{11})/);   if (m) return m[1];
+  m = input.match(/[?&]v=([a-zA-Z0-9_-]{11})/);    if (m) return m[1];
   m = input.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/); if (m) return m[1];
-  m = input.match(/embed\/([a-zA-Z0-9_-]{11})/);    if (m) return m[1];
-  m = input.match(/shorts\/([a-zA-Z0-9_-]{11})/);   if (m) return m[1];
+  m = input.match(/embed\/([a-zA-Z0-9_-]{11})/);     if (m) return m[1];
+  m = input.match(/shorts\/([a-zA-Z0-9_-]{11})/);    if (m) return m[1];
   if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
   return null;
 }
 
 function previewVid() {
   const id   = extractVid(document.getElementById('v-url').value);
-  const hint = document.getElementById('v-id-hint');
+  const hint = document.getElementById('v-hint');
   if (id) { hint.textContent = 'Video ID: ' + id; hint.style.color = '#4a9a6a'; }
   else if (document.getElementById('v-url').value.length > 4)
     { hint.textContent = 'Cannot extract ID'; hint.style.color = '#b94a4a'; }
   else hint.textContent = '';
 }
 
-function generateVideo() {
+async function publishVideo() {
   const url   = document.getElementById('v-url').value;
   const title = document.getElementById('v-title').value.trim();
-  const page  = document.getElementById('v-page').value;
+  const page  = document.getElementById('v-page').value; // 'journal' or 'index'
   const id    = extractVid(url);
 
   if (!id)    { alert('Cannot extract a YouTube video ID from that input.'); return; }
-  if (!title) { alert('Please enter a video title.'); return; }
+  if (!title) { alert('Enter a video title.'); return; }
 
-  const html = `<div class="video-card">
-  <div class="video-card__embed">
-    <iframe src="https://www.youtube.com/embed/${id}"
-      title="${esc(title)}"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen loading="lazy"></iframe>
-  </div>
-  <div class="video-card__body">
-    <h3 class="video-card__title">${esc(title)}</h3>
-    <span class="video-card__date">@aterraliberty &nbsp;&middot;&nbsp; Central Portugal</span>
-  </div>
-</div>`;
-
-  document.getElementById('v-html').value = html;
-  document.getElementById('v-note').innerHTML = page === 'journal'
-    ? 'Paste inside <code>.video-grid</code> in <strong>journal.html</strong> — replacing a placeholder block, or adding before the first one.'
-    : 'Paste into the video/featured section in <strong>index.html</strong>.';
-  document.getElementById('v-out').style.display = '';
-  document.getElementById('v-out').scrollIntoView({ behavior:'smooth', block:'start' });
-}
-
-// ── Section 4: Subscribers ────────────────────────────────────
-let cachedSubs = [];
-
-async function loadSubscribers() {
-  const btn = document.getElementById('sub-btn');
-  btn.disabled = true; btn.textContent = 'Loading…';
-  setLoading('sub-status', 'Fetching from worker…');
-  document.getElementById('sub-meta').style.display = 'none';
-  document.getElementById('sub-table-wrap').style.display = 'none';
-  document.getElementById('sub-csv-btn').style.display = 'none';
+  const filename = page === 'journal' ? 'journal.html' : 'index.html';
+  setBusy('v-pub', 'Publishing…');
+  setLoading('v-st', 'Fetching ' + filename + ' from GitHub…');
 
   try {
-    const res = await fetch(FORM_WORKER + '/subscribers/list', {
+    const { sha, content: html } = await ghGetFile(filename);
+
+    const card = buildVideoCard(id, title);
+
+    // Find .video-grid opening tag, inject after >
+    const gridMarker = '<div class="video-grid"';
+    const gStart = html.indexOf(gridMarker);
+    if (gStart === -1) throw new Error('Cannot find .video-grid in ' + filename + '.');
+    const gClose = html.indexOf('>', gStart) + 1;
+
+    const newHtml = html.slice(0, gClose) + '\n\n' + card + '\n' + html.slice(gClose);
+
+    setLoading('v-st', 'Committing to GitHub…');
+    await ghPutFile(filename, newHtml, sha,
+      'Admin: Add video "' + title + '" to ' + filename);
+
+    setStatus('v-st', 's-ok',
+      '✓ Video added! Live at ' +
+      '<a href="https://aterraliberty.com/' + (page === 'journal' ? 'journal' : '') +
+      '.html" target="_blank">aterraliberty.com</a> in ~60 seconds.');
+  } catch (e) {
+    setStatus('v-st', 's-err', '<strong>Error:</strong> ' + esc(e.message));
+  }
+
+  setReady('v-pub', 'Add Video to Website');
+}
+
+function buildVideoCard(id, title) {
+  return `        <div class="video-card">
+          <div class="video-card__embed">
+            <iframe src="https://www.youtube.com/embed/${id}"
+              title="${esc(title)}"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-card__body">
+            <h3 class="video-card__title">${esc(title)}</h3>
+            <span class="video-card__date">@aterraliberty &nbsp;&middot;&nbsp; Central Portugal</span>
+          </div>
+        </div>`;
+}
+
+// ── Section 4: Subscribers ─────────────────────────────────
+let cachedSubs = [];
+
+async function loadSubs() {
+  setBusy('s-load', 'Loading…');
+  setLoading('s-st', 'Fetching subscribers…');
+  document.getElementById('s-pills').style.display = 'none';
+  document.getElementById('s-table').style.display = 'none';
+  document.getElementById('s-csv').style.display = 'none';
+
+  try {
+    const res = await fetch(FORM_WKR + '/subscribers/list', {
       headers: { 'x-admin-key': ADMIN_KEY }
     });
     if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + res.statusText);
@@ -1074,12 +1222,11 @@ async function loadSubscribers() {
     if (!data.ok) throw new Error(data.error || 'Worker returned ok:false');
 
     cachedSubs = data.subscribers || [];
+    document.getElementById('s-total').textContent  = data.count || cachedSubs.length;
+    document.getElementById('s-loaded').textContent = cachedSubs.length;
+    document.getElementById('s-pills').style.display = '';
 
-    document.getElementById('sub-total').textContent  = data.count || cachedSubs.length;
-    document.getElementById('sub-loaded').textContent = cachedSubs.length;
-    document.getElementById('sub-meta').style.display = '';
-
-    const tbody = document.getElementById('sub-body');
+    const tbody = document.getElementById('s-body');
     tbody.innerHTML = '';
     if (!cachedSubs.length) {
       tbody.innerHTML = '<tr><td colspan="5" style="color:#a89880;text-align:center;padding:2rem">No subscribers yet</td></tr>';
@@ -1090,21 +1237,21 @@ async function loadSubscribers() {
           : '<span style="color:#a89880">—</span>';
         tbody.innerHTML +=
           '<tr><td style="color:#a89880">' + (i+1) + '</td>' +
-          '<td><strong>' + esc(s.email||'') + '</strong></td>' +
-          '<td>' + esc(s.source||'website') + '</td>' +
+          '<td><strong>' + esc(s.email || '') + '</strong></td>' +
+          '<td>' + esc(s.source || 'website') + '</td>' +
           '<td>' + interests + '</td>' +
-          '<td>' + esc(s.date||'') + '</td></tr>';
+          '<td>' + esc(s.date || '') + '</td></tr>';
       });
     }
 
-    document.getElementById('sub-table-wrap').style.display = '';
-    if (cachedSubs.length) document.getElementById('sub-csv-btn').style.display = '';
-    setStatus('sub-status', 'ok', 'Loaded ' + cachedSubs.length + ' subscriber' + (cachedSubs.length !== 1 ? 's' : ''));
-  } catch(e) {
-    setStatus('sub-status', 'err', '<strong>Error:</strong> ' + esc(e.message));
+    document.getElementById('s-table').style.display = '';
+    if (cachedSubs.length) document.getElementById('s-csv').style.display = '';
+    setStatus('s-st', 's-ok', 'Loaded ' + cachedSubs.length + ' subscriber' + (cachedSubs.length !== 1 ? 's' : ''));
+  } catch (e) {
+    setStatus('s-st', 's-err', '<strong>Error:</strong> ' + esc(e.message));
   }
 
-  btn.disabled = false; btn.textContent = 'Reload';
+  setReady('s-load', 'Reload');
 }
 
 function exportCSV() {
@@ -1116,258 +1263,205 @@ function exportCSV() {
       '"' + (s.date||'').replace(/"/g,'""') + '"',
     ].join(','))
   );
-  const blob = new Blob([rows.join('\n')], { type:'text/csv' });
   const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(blob),
-    download: 'atl-subscribers-' + todayISO() + '.csv'
+    href: URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' })),
+    download: 'atl-subscribers-' + isoToday() + '.csv'
   });
   a.click(); URL.revokeObjectURL(a.href);
 }
 
-// ── Section 5: Analytics ──────────────────────────────────────
-async function loadAnalytics() {
-  const today = todayISO();
-  setLoading('ana-status', 'Fetching stats…');
+// ── Section 5: Analytics ───────────────────────────────────
+async function loadAna() {
+  const today = isoToday();
+  setLoading('ana-st', 'Fetching stats…');
   document.getElementById('ana-out').style.display = 'none';
 
   try {
-    const res = await fetch(ANA_WORKER + '/stats?date=' + today);
+    const res = await fetch(ANA_WKR + '/stats?date=' + today);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
 
-    // Build display
-    let out = '<div class="stats-grid">';
-    out += statCard(d.visitors,        'Visitors');
-    out += statCard(d.youtubeClicks,   'YouTube Clicks');
-    out += statCard(d.newSubscribers,  'New Subscribers');
-    out += statCard(d.subscribeClicks, 'Subscribe Clicks');
-    out += statCard(d.contactSent,     'Messages Sent');
-    const avgMin = d.totalSeconds ? Math.round(d.totalSeconds / Math.max(d.visitors,1) / 60) : 0;
-    out += statCard(avgMin + 'm', 'Avg Time on Site');
+    const avgMin = d.totalSeconds && d.visitors
+      ? Math.round(d.totalSeconds / d.visitors / 60) : 0;
+
+    let out = '<div class="stats">';
+    out += sc(d.visitors,        'Visitors');
+    out += sc(d.youtubeClicks,   'YouTube Clicks');
+    out += sc(d.newSubscribers,  'New Subscribers');
+    out += sc(d.subscribeClicks, 'Subscribe Clicks');
+    out += sc(d.contactSent,     'Messages Sent');
+    out += sc(avgMin + 'm',      'Avg Time on Site');
     out += '</div>';
 
-    // Top posts
     const posts = Object.entries(d.postClicks || {}).sort((a,b) => b[1]-a[1]);
     if (posts.length) {
-      out += '<p style="font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin-bottom:0.5rem">Top Posts</p>';
-      out += '<div class="table-wrap"><table><thead><tr><th>#</th><th>Slug</th><th>Clicks</th></tr></thead><tbody>';
-      posts.slice(0,10).forEach(([slug, n], i) => {
-        out += '<tr><td style="color:#a89880">' + (i+1) + '</td><td>' + esc(slug) + '</td><td><strong>' + n + '</strong></td></tr>';
-      });
-      out += '</tbody></table></div><br>';
+      out += tblSection('Top Posts', ['#','Post','Clicks'],
+        posts.slice(0,10).map(([slug,n], i) => [i+1, esc(slug), '<strong>' + n + '</strong>']));
     }
 
-    // Page views
     const pages = Object.entries(d.pageViews || {}).sort((a,b) => b[1]-a[1]);
     if (pages.length) {
-      out += '<p style="font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin-bottom:0.5rem">Page Views</p>';
-      out += '<div class="table-wrap"><table><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody>';
-      pages.forEach(([p, n]) => {
-        out += '<tr><td>' + esc(p) + '</td><td><strong>' + n + '</strong></td></tr>';
-      });
-      out += '</tbody></table></div><br>';
+      out += tblSection('Page Views', ['Page','Views'],
+        pages.map(([p,n]) => [esc(p), n]));
     }
 
-    // Sources / Countries
     const src = Object.entries(d.sources || {}).sort((a,b)=>b[1]-a[1]);
     const ctr = Object.entries(d.countries || {}).sort((a,b)=>b[1]-a[1]);
     if (src.length || ctr.length) {
-      out += '<div class="row2">';
-      if (src.length) {
-        out += '<div><p style="font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin-bottom:0.5rem">Sources</p><div class="table-wrap"><table><thead><tr><th>Source</th><th>n</th></tr></thead><tbody>';
-        src.forEach(([k,v]) => out += '<tr><td>' + esc(k) + '</td><td>' + v + '</td></tr>');
-        out += '</tbody></table></div></div>';
-      }
-      if (ctr.length) {
-        out += '<div><p style="font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin-bottom:0.5rem">Countries</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>n</th></tr></thead><tbody>';
-        ctr.slice(0,10).forEach(([k,v]) => out += '<tr><td>' + esc(k) + '</td><td>' + v + '</td></tr>');
-        out += '</tbody></table></div></div>';
-      }
+      out += '<div class="g2" style="margin-top:1rem">';
+      if (src.length) out += tblSection('Sources',   ['Source','n'], src.map(([k,v])=>[esc(k),v]));
+      if (ctr.length) out += tblSection('Countries', ['Country','n'], ctr.slice(0,10).map(([k,v])=>[esc(k),v]));
       out += '</div>';
     }
 
     document.getElementById('ana-out').innerHTML = out;
     document.getElementById('ana-out').style.display = '';
-    setStatus('ana-status', 'ok', 'Stats loaded for ' + formatDate(today));
-  } catch(e) {
-    setStatus('ana-status', 'err', '<strong>Error:</strong> ' + esc(e.message));
+    setStatus('ana-st', 's-ok', 'Stats loaded for ' + fmtDate(today));
+  } catch (e) {
+    setStatus('ana-st', 's-err', '<strong>Error:</strong> ' + esc(e.message));
   }
 }
 
-function statCard(val, label) {
-  const v = (val === null || val === undefined) ? '—' : val;
-  return '<div class="stat-card"><span class="stat-num">' + v + '</span><span class="stat-label">' + label + '</span></div>';
+function sc(val, label) {
+  return '<div class="sc"><b>' + (val ?? '—') + '</b><span>' + label + '</span></div>';
+}
+function tblSection(title, heads, rows) {
+  let h = '<p style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b5c47;margin:1rem 0 0.4rem">' + title + '</p>';
+  h += '<div class="tw"><table><thead><tr>' + heads.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>';
+  rows.forEach(r => { h += '<tr>' + r.map(c => '<td>' + c + '</td>').join('') + '</tr>'; });
+  return h + '</tbody></table></div>';
 }
 
-// ── Section 6: Newsletter ─────────────────────────────────────
-
-// Rich text toolbar
-function fmt(cmd) {
-  document.getElementById('nl-editor').focus();
-  document.execCommand(cmd, false, null);
-}
-
-function fmtH2() {
-  document.getElementById('nl-editor').focus();
-  document.execCommand('formatBlock', false, 'h2');
-}
-
+// ── Section 6: Newsletter ──────────────────────────────────
+function fmt(cmd) { document.getElementById('nl-editor').focus(); document.execCommand(cmd, false, null); }
+function fmtH2()  { document.getElementById('nl-editor').focus(); document.execCommand('formatBlock', false, 'h2'); }
+function fmtQ()   { document.getElementById('nl-editor').focus(); document.execCommand('formatBlock', false, 'blockquote'); }
 function fmtLink() {
   const url = prompt('Enter URL:');
-  if (url) {
-    document.getElementById('nl-editor').focus();
-    document.execCommand('createLink', false, url);
-  }
+  if (url) { document.getElementById('nl-editor').focus(); document.execCommand('createLink', false, url); }
 }
-
-function fmtQuote() {
-  document.getElementById('nl-editor').focus();
-  document.execCommand('formatBlock', false, 'blockquote');
-}
-
 function fmtClear() {
   document.getElementById('nl-editor').focus();
   document.execCommand('removeFormat', false, null);
   document.execCommand('formatBlock', false, 'p');
 }
 
-let sourceMode = false;
-function toggleSource() {
-  const editor = document.getElementById('nl-editor');
-  const source = document.getElementById('nl-source');
-  const toolbar = document.getElementById('nl-toolbar');
-  if (!sourceMode) {
-    source.value = editor.innerHTML;
-    editor.style.display = 'none';
-    source.style.display = '';
-    sourceMode = true;
-    // Disable toolbar buttons
-    toolbar.querySelectorAll('.toolbar-btn:not(:last-child)').forEach(b => b.disabled = true);
+let srcMode = false;
+function toggleSrc() {
+  const ed = document.getElementById('nl-editor');
+  const src = document.getElementById('nl-src');
+  if (!srcMode) {
+    src.value = ed.innerHTML;
+    ed.style.display = 'none'; src.style.display = '';
+    srcMode = true;
   } else {
-    editor.innerHTML = source.value;
-    source.style.display = 'none';
-    editor.style.display = '';
-    sourceMode = false;
-    toolbar.querySelectorAll('.toolbar-btn').forEach(b => b.disabled = false);
+    ed.innerHTML = src.value;
+    src.style.display = 'none'; ed.style.display = '';
+    srcMode = false;
   }
 }
 
 function getBody() {
-  if (sourceMode) return document.getElementById('nl-source').value;
-  return document.getElementById('nl-editor').innerHTML;
+  return srcMode
+    ? document.getElementById('nl-src').value
+    : document.getElementById('nl-editor').innerHTML;
 }
 
 function getInterests() {
-  return ['journal','health','portugal','shop']
-    .filter(k => document.getElementById('nl-i-' + k).checked);
+  return ['j','h','p','s']
+    .map(k => document.getElementById('i-' + k))
+    .filter(el => el.checked).map(el => el.value);
 }
 
-function previewNewsletter() {
-  const subject = document.getElementById('nl-subject').value.trim();
+function previewNL() {
+  const subject = document.getElementById('nl-sub').value.trim();
   const body    = getBody();
-  if (!body.replace(/<[^>]+>/g,'').trim()) { alert('Body is empty.'); return; }
-  document.getElementById('preview-subject').textContent = subject || '(no subject)';
-  document.getElementById('preview-body').innerHTML = body;
-  document.getElementById('preview-modal').classList.add('open');
+  if (!body.replace(/<[^>]+>/g, '').trim()) { alert('Body is empty.'); return; }
+  document.getElementById('modal-sub').textContent = subject || '(no subject)';
+  document.getElementById('modal-body').innerHTML  = body;
+  document.getElementById('modal').classList.add('on');
 }
 
-function closePreviewModal(e) {
-  if (!e || e.target === document.getElementById('preview-modal') || e.type === 'click' && !e.target.closest('.modal'))
-    document.getElementById('preview-modal').classList.remove('open');
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal') || e.type !== undefined)
+    document.getElementById('modal').classList.remove('on');
 }
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.getElementById('preview-modal').classList.remove('open');
+  if (e.key === 'Escape') document.getElementById('modal').classList.remove('on');
 });
 
 async function sendTest() {
-  const subject = document.getElementById('nl-subject').value.trim();
-  const preview = document.getElementById('nl-preview').value.trim();
+  const subject = document.getElementById('nl-sub').value.trim();
+  const prev    = document.getElementById('nl-prev').value.trim();
   const body    = getBody();
-  if (!subject) { alert('Please enter a subject.'); return; }
-  if (!body.replace(/<[^>]+>/g,'').trim()) { alert('Body is empty.'); return; }
+  if (!subject) { alert('Enter a subject.'); return; }
+  if (!body.replace(/<[^>]+>/g, '').trim()) { alert('Body is empty.'); return; }
 
-  const btn = document.getElementById('nl-test-btn');
-  btn.disabled = true; btn.textContent = 'Sending…';
-  document.getElementById('nl-status').innerHTML = '';
-
+  setBusy('nl-test-btn', 'Sending…');
   try {
-    const res = await fetch(FORM_WORKER + '/send-newsletter', {
+    const res = await fetch(FORM_WKR + '/send-newsletter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        adminKey: ADMIN_KEY,
-        subject,
-        previewText: preview,
-        body,
-        testMode: true,
-      })
+      body: JSON.stringify({ adminKey: ADMIN_KEY, subject, previewText: prev, body, testMode: true }),
     });
     const data = await res.json();
-    if (data.ok) {
-      setStatus('nl-status', 'ok', 'Test email sent to coddinging@gmail.com');
-    } else {
-      setStatus('nl-status', 'err', '<strong>Error:</strong> ' + esc(data.error || 'Unknown error'));
-    }
-  } catch(e) {
-    setStatus('nl-status', 'err', '<strong>Error:</strong> ' + esc(e.message));
+    if (data.ok) setStatus('nl-st', 's-ok', '✓ Test email sent to coddinging@gmail.com');
+    else setStatus('nl-st', 's-err', '<strong>Error:</strong> ' + esc(data.error || 'Unknown'));
+  } catch (e) {
+    setStatus('nl-st', 's-err', '<strong>Error:</strong> ' + esc(e.message));
   }
-
-  btn.disabled = false; btn.textContent = 'Send TEST to coddinging@gmail.com';
+  setReady('nl-test-btn', 'Send TEST →  coddinging@gmail.com');
 }
 
 function openConfirm() {
-  const subject = document.getElementById('nl-subject').value.trim();
+  const subject = document.getElementById('nl-sub').value.trim();
   const body    = getBody();
-  if (!subject) { alert('Please enter a subject.'); return; }
-  if (!body.replace(/<[^>]+>/g,'').trim()) { alert('Body is empty.'); return; }
-  document.getElementById('confirm-box').classList.add('open');
-  document.getElementById('confirm-input').value = '';
-  document.getElementById('confirm-btn').disabled = true;
-  document.getElementById('confirm-input').focus();
+  if (!subject) { alert('Enter a subject.'); return; }
+  if (!body.replace(/<[^>]+>/g, '').trim()) { alert('Body is empty.'); return; }
+  document.getElementById('cfm').classList.add('on');
+  document.getElementById('cfm-in').value = '';
+  document.getElementById('cfm-btn').disabled = true;
+  document.getElementById('cfm-in').focus();
 }
 
-function closeConfirm() {
-  document.getElementById('confirm-box').classList.remove('open');
-}
-
-function checkConfirm() {
-  const val = document.getElementById('confirm-input').value;
-  document.getElementById('confirm-btn').disabled = (val !== 'SEND');
+function closeCfm() { document.getElementById('cfm').classList.remove('on'); }
+function checkCfm() {
+  document.getElementById('cfm-btn').disabled =
+    document.getElementById('cfm-in').value !== 'SEND';
 }
 
 async function sendAll() {
-  const subject   = document.getElementById('nl-subject').value.trim();
-  const preview   = document.getElementById('nl-preview').value.trim();
+  const subject   = document.getElementById('nl-sub').value.trim();
+  const prev      = document.getElementById('nl-prev').value.trim();
   const body      = getBody();
   const interests = getInterests();
 
-  document.getElementById('confirm-btn').disabled = true;
-  document.getElementById('confirm-btn').textContent = 'Sending…';
-  document.getElementById('nl-status').innerHTML = '';
-
+  setBusy('cfm-btn', 'Sending…');
   try {
-    const payload = { adminKey: ADMIN_KEY, subject, previewText: preview, body };
+    const payload = { adminKey: ADMIN_KEY, subject, previewText: prev, body };
     if (interests.length) payload.interests = interests;
 
-    const res = await fetch(FORM_WORKER + '/send-newsletter', {
+    const res = await fetch(FORM_WKR + '/send-newsletter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     const data = await res.json();
-    closeConfirm();
+    closeCfm();
     if (data.ok) {
-      setStatus('nl-status', 'ok',
-        'Sent to <strong>' + data.sent + '</strong> subscriber' + (data.sent !== 1 ? 's' : '') +
-        (data.failed ? ' &nbsp;· ' + data.failed + ' failed' : ''));
+      setStatus('nl-st', 's-ok',
+        '✓ Sent to <strong>' + data.sent + '</strong> subscriber' +
+        (data.sent !== 1 ? 's' : '') +
+        (data.failed ? ' &nbsp;·&nbsp; ' + data.failed + ' failed' : ''));
     } else {
-      setStatus('nl-status', 'err', '<strong>Error:</strong> ' + esc(data.error || 'Unknown error'));
+      setStatus('nl-st', 's-err', '<strong>Error:</strong> ' + esc(data.error || 'Unknown'));
     }
-  } catch(e) {
-    closeConfirm();
-    setStatus('nl-status', 'err', '<strong>Error:</strong> ' + esc(e.message));
+  } catch (e) {
+    closeCfm();
+    setStatus('nl-st', 's-err', '<strong>Error:</strong> ' + esc(e.message));
   }
-  document.getElementById('confirm-btn').textContent = 'Send Now';
+  document.getElementById('cfm-btn').textContent = 'Send Now';
+  document.getElementById('cfm-btn').disabled = false;
 }
 </script>
 </body>
