@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscrição cancelada — A Terra Liberty</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="style.css">
+
+  <!--
+    ARCHITECTURE NOTE
+    ─────────────────
+    The actual unsubscribe action (KV deletion + analytics) is handled by the
+    Cloudflare Worker at:
+      https://atl-form-handler.coddinging.workers.dev/unsubscribe?email=<email>
+
+    That Worker route performs the deletion and returns its own styled HTML
+    response directly — so subscribers who click the unsubscribe link in an
+    email never reach this page.
+
+    This page exists as a static fallback served by Cloudflare Pages when
+    someone navigates to /unsubscribe directly (e.g. by typing the URL,
+    following a bookmark, or if the Worker is temporarily unavailable).
+    It shows a friendly confirmation using whatever URL params are present,
+    but performs no server-side action of its own.
+  -->
+
+  <style>
+    .unsub-section {
+      min-height: calc(100vh - 280px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1.5rem;
+      background: var(--cream);
+    }
+
+    .unsub-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      max-width: 520px;
+      width: 100%;
+      padding: 3rem 2.5rem;
+      text-align: center;
+    }
+
+    .unsub-card__rule {
+      border: none;
+      border-top: 1px solid var(--border-light);
+      margin: 1.75rem 0;
+    }
+
+    .unsub-card__icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1.5rem;
+      color: var(--terracotta);
+    }
+
+    .unsub-card__title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 500;
+      color: var(--brown-dark);
+      margin-bottom: 0.75rem;
+    }
+
+    .unsub-card__email {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      background: var(--cream-dark);
+      border: 1px solid var(--border);
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+      word-break: break-all;
+    }
+
+    .unsub-card__body {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 0;
+    }
+
+    .unsub-card__back {
+      display: inline-block;
+      margin-top: 2rem;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .unsub-card__back:hover {
+      color: var(--brown-dark);
+      border-color: var(--terracotta);
+    }
+
+    /* email hidden by default — JS reveals it if param present */
+    #unsub-email-row { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- ======= HEADER ======= -->
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header__top" style="position:relative;">
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="index.html" class="site-header__brand">A Terra Liberty</a>
+        <p class="site-header__tagline">Slow Living in a Fast World</p>
+      </div>
+      <nav class="site-nav" id="siteNav">
+        <ul class="site-nav__list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="journal.html">Journal &amp; Videos</a></li>
+          <li><a href="healthnotes.html">Health Notes</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="newsletter.html">Newsletter</a></li>
+          <li><a href="newsletter.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ======= UNSUBSCRIBE CARD ======= -->
+  <section class="unsub-section">
+    <div class="unsub-card">
+
+      <!-- Leaf icon -->
+      <svg class="unsub-card__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M24 6C14 6 8 16 8 26c0 8 5.5 13.5 13 14 0-8 3-14 10-18-4 5-5 10-4 16 6-1 13-7 13-16 0-10-6-16-16-16z" fill="currentColor" opacity="0.18"/>
+        <path d="M24 6C14 6 8 16 8 26c0 8 5.5 13.5 13 14 0-8 3-14 10-18-4 5-5 10-4 16 6-1 13-7 13-16 0-10-6-16-16-16z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M21 40l3-14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+
+      <h1 class="unsub-card__title" id="unsub-title">Subscrição cancelada com sucesso.</h1>
+
+      <div id="unsub-email-row">
+        <span class="unsub-card__email" id="unsub-email-display"></span>
+      </div>
+
+      <hr class="unsub-card__rule">
+
+      <p class="unsub-card__body" id="unsub-body">
+        Removemos o seu endereço da nossa lista. Não receberá mais cartas de Portugal.
+      </p>
+      <p class="unsub-card__body" style="margin-top:0.75rem;">
+        Se foi um engano, pode voltar a subscrever a qualquer momento.
+      </p>
+
+      <a href="index.html" class="unsub-card__back">← Voltar ao início</a>
+
+    </div>
+  </section>
+
+  <!-- ======= FOOTER ======= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div class="footer-brand">
+          <h3>A Terra Liberty</h3>
+          <p>Slow living in Central Portugal. Documenting food, health, and the intentional life we are building — one quiet morning at a time.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="journal.html">Journal &amp; Videos</a></li>
+            <li><a href="healthnotes.html">Health Notes</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="newsletter.html">Newsletter</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="https://www.youtube.com/@aterraliberty" target="_blank" rel="noopener">YouTube</a></li>
+            <li><a href="https://www.instagram.com/aterraliberty" target="_blank" rel="noopener">Instagram</a></li>
+            <li><a href="newsletter.html#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="site-footer__bottom">
+        <span>&copy; 2025 A Terra Liberty. All rights reserved.</span>
+        <span>Elena &mdash; Central Portugal</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    const toggle = document.getElementById('navToggle');
+    const nav = document.getElementById('siteNav');
+    toggle.addEventListener('click', () => nav.classList.toggle('open'));
+
+    // Personalise message if ?email= param is present
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get('email') || '';
+      const email = raw.toLowerCase().trim();
+
+      if (email && email.includes('@')) {
+        document.getElementById('unsub-title').textContent = 'Subscrição cancelada.';
+
+        const emailEl = document.getElementById('unsub-email-display');
+        emailEl.textContent = email;
+        document.getElementById('unsub-email-row').style.display = 'block';
+
+        document.getElementById('unsub-body').textContent =
+          'O endereço ' + email + ' foi removido da nossa lista. Não receberá mais cartas de Portugal.';
+      }
+    }());
+  </script>
+
+</body>
+</html>
